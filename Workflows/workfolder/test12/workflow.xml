@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="e462a16f-20a1-495c-8d49-e70baaf10152" editor-version="2.0" version="0.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>test12</display-name>
+    <position y="50.0" x="100.0"/>
+    <input/>
+    <output/>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="50.0" x="300.0"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item0" type="link" comparator="0">
+        <display-name>Workflow element</display-name>
+        <script encoded="false"></script>
+        <in-binding/>
+        <out-binding/>
+        <description> </description>
+        <position y="60.0" x="130.0"/>
+    </workflow-item>
+</ns2:workflow>

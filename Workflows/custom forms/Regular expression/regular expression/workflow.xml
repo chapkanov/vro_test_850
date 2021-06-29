@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item0" object-name="workflow:name=generic" id="5abe1363-7a1b-43a8-926a-4d16248330fa" version="0.0.0" api-version="6.0.0" allowed-operations="vfe" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[regular expression]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="regExp_var" type="string"/>
+    <param name="str_var" type="string"/>
+  </input>
+  <attrib name="regExp" type="Array/string" read-only="false">
+    <value encoded="n"><![CDATA[#{#string#[0-9]+#;#string#[a-z]+#;#string#[A-Z]+#}#]]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="50.0" x="240.0"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="regExp_var">
+      <desc><![CDATA[regExp_var]]></desc>
+      <p-qual kind="ognl" name="genericEnumeration" type="Array/string"><![CDATA[#regExp]]></p-qual>
+    </p-param>
+    <p-param name="str_var">
+      <desc><![CDATA[str_var]]></desc>
+      <p-qual kind="ognl" name="regexp" type="Regexp"><![CDATA[#regExp_var]]></p-qual>
+    </p-param>
+  </presentation>
+</workflow>

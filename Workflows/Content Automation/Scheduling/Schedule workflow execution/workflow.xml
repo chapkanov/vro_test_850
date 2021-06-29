@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="9ce16d9a-3ff0-4892-8347-8bccd4ebadff" version="0.0.10" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Schedule workflow execution]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="scheduleData" type="Properties"/>
+    <param name="password" type="string">
+      <description><![CDATA[Password]]></description>
+    </param>
+    <param name="username" type="string">
+      <description><![CDATA[Username of the user to run the workflow. If null or empty, uses the current user]]></description>
+    </param>
+  </input>
+  <output>
+    <param name="newTask" type="Task">
+      <description><![CDATA[The recurrent task that this workflow creates]]></description>
+    </param>
+  </output>
+  <attrib name="workflowArguments" type="Properties" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+    <description><![CDATA[[Mandatory] Properties the workflow requires to run]]></description>
+  </attrib>
+  <attrib name="startDate" type="Date" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="endDate" type="Date" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="recurrencePattern" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[The recurrence pattern, if any. See workflow description for possible values]]></description>
+  </attrib>
+  <attrib name="workflowID" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="recurrence" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="errorCode" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="624.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item2" type="task">
+    <display-name><![CDATA[Prepare data]]></display-name>
+    <script encoded="false"><![CDATA[workflowID = scheduleData.get("workflow-id");
+
+workflowArguments = new Properties(scheduleData.get("executiondata"));
+workflowArguments.put("__taskName", scheduleData.get("name"))
+scheduledPeriod = scheduleData.get("scheduled_for_period_min")
+
+
+startDate = new Date(Date.now())
+startDate.setSeconds(startDate.getSeconds()+ 10)
+
+if(scheduledPeriod!= null){
+	endDate = new Date(Date.now())
+	endDate.setMinutes(endDate.getMinutes() + scheduledPeriod)
+}
+
+recurrence = scheduleData.get("recurrence"); //"every-minutes"
+recurrencePattern = scheduleData.get("pattern"); 
+
+System.log("")
+System.log("Start date : \t" + startDate.toGMTString())
+if(endDate){
+	System.log("End date : \t" + endDate.toGMTString())
+}
+System.log("Recurrence Pattern: \t" + recurrencePattern)
+System.log("Recurrence: \t" + recurrence)
+System.log("Workflow execution parameters")
+
+for each(var key in workflowArguments.keys){
+	System.log("\t\t" + key + "=" + workflowArguments.get(key))
+}
+
+]]></script>
+    <in-binding>
+      <bind name="scheduleData" type="Properties" export-name="scheduleData"/>
+    </in-binding>
+    <out-binding>
+      <bind name="endDate" type="Date" export-name="endDate"/>
+      <bind name="recurrence" type="string" export-name="recurrence"/>
+      <bind name="recurrencePattern" type="string" export-name="recurrencePattern"/>
+      <bind name="startDate" type="Date" export-name="startDate"/>
+      <bind name="workflowArguments" type="Properties" export-name="workflowArguments"/>
+      <bind name="workflowID" type="string" export-name="workflowID"/>
+    </out-binding>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item0" throw-bind-name="errorCode" type="link" linked-workflow-id="B88080808080808080808080808080803D80808001223281930284530e3e80cba">
+    <display-name><![CDATA[Create recurrent task]]></display-name>
+    <in-binding>
+      <bind name="workflowId" type="string" export-name="workflowID">
+        <description><![CDATA[ID of the workflow to run]]></description>
+      </bind>
+      <bind name="startDate" type="Date" export-name="startDate">
+        <description><![CDATA[Date to start task]]></description>
+      </bind>
+      <bind name="endDate" type="Date" export-name="endDate">
+        <description><![CDATA[End date, if any]]></description>
+      </bind>
+      <bind name="recurrencePattern" type="string" export-name="recurrencePattern">
+        <description><![CDATA[The recurrence pattern, if any. See workflow description for possible values]]></description>
+      </bind>
+      <bind name="recurrenceCycle" type="string" export-name="recurrence">
+        <description><![CDATA[The recurrence cycle mode, if any. See workflow description for possible values]]></description>
+      </bind>
+      <bind name="workflowArguments" type="Properties" export-name="workflowArguments">
+        <description><![CDATA[[Mandatory] Properties the workflow requires to run]]></description>
+      </bind>
+      <bind name="username" type="string" export-name="username">
+        <description><![CDATA[Username of the user to run the workflow. If null or empty, uses the current user]]></description>
+      </bind>
+      <bind name="password" type="string" export-name="password">
+        <description><![CDATA[Password]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="newTask" type="Task" export-name="newTask">
+        <description><![CDATA[The recurrent task that this workflow creates]]></description>
+      </bind>
+    </out-binding>
+    <description><![CDATA[Creates a recurrent task. Returns the newly created task.
+Possible recurrenceCycle attribute values:
+- one-time: Task runs once only.
+- every-minutes: Task runs every minute
+- every-hours: Task runs hourly
+- every-days: Task runs daily
+- every-weeks: Task runs weekly
+- every-months: Task runs monthly 
+
+Possible recurrencePattern attribute values depend on the recurrenceCycle attribute value:
+- one-time: Ignores the recurrencePattern attribute
+- every-minutes: Seconds into each minute at which the task starts, for example, "00" or "00, 30" 
+- every-hours: Minutes and seconds into each hour at which the task starts, for example, "00:00" or "00:00, 30:00"
+- every-days: Time at which the task starts each day, for example, "18:30:00" or "12:00:00, 19:30:00"
+- every-weeks: Day and time at which the task starts each week, for example, "Mon 00:00:00" or "Mon 00:00:00, Wed 18:00:00"
+- every-months: Date and time at which the task starts each month, for example, "14 00:00:00" or "14 00:00:00, 28 18:00:00"]]></description>
+    <position y="55.40909090909091" x="364.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="scheduleData">
+      <desc><![CDATA[scheduleData]]></desc>
+    </p-param>
+    <p-param name="password">
+      <desc><![CDATA[Password]]></desc>
+    </p-param>
+    <p-param name="username">
+      <desc><![CDATA[Username of the user to run the workflow. If null or empty, uses the current user]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

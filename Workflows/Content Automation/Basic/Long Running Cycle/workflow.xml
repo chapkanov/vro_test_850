@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item4" object-name="workflow:name=generic" id="6813f0d7-e4a5-4097-91ae-c153ca59a8d3" version="0.0.0" api-version="6.0.0" allowed-operations="vfe" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Long Running Cycle]]></display-name>
+  <position y="27.727272727272727" x="105.0"/>
+  <input>
+    <param name="cycleCount" type="string"/>
+    <param name="sleepTimeInSec" type="number"/>
+  </input>
+  <attrib name="currentCycle" type="number" read-only="false">
+    <value encoded="n"><![CDATA[0.0]]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="27.227272727272727" x="1064.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="custom-condition" alt-out-name="item3">
+    <display-name><![CDATA[Custom decision]]></display-name>
+    <script encoded="false"><![CDATA[return currentCycle >= cycleCount;]]></script>
+    <in-binding>
+      <bind name="cycleCount" type="string" export-name="cycleCount"/>
+      <bind name="currentCycle" type="number" export-name="currentCycle"/>
+    </in-binding>
+    <position y="27.227272727272727" x="745.0"/>
+  </workflow-item>
+  <workflow-item name="item3" out-name="item5" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[System.log("Wait for "+ sleepTimeInSec + " sec")]]></script>
+    <in-binding>
+      <bind name="sleepTimeInSec" type="number" export-name="sleepTimeInSec"/>
+    </in-binding>
+    <out-binding/>
+    <position y="109.95454545454544" x="745.0"/>
+  </workflow-item>
+  <workflow-item name="item2" prototype-id="increase-counter" out-name="item4" content-mode="x" type="task">
+    <display-name><![CDATA[Increase counter]]></display-name>
+    <script encoded="false"><![CDATA[//Auto-generated script
+counter = counter+1;]]></script>
+    <in-binding>
+      <bind name="counter" type="number" export-name="currentCycle">
+        <description><![CDATA[counter to increment]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="counter" type="number" export-name="currentCycle">
+        <description><![CDATA[counter incremented]]></description>
+      </bind>
+    </out-binding>
+    <description><![CDATA[Increment a counter by one]]></description>
+    <position y="109.95454545454544" x="285.0"/>
+  </workflow-item>
+  <workflow-item name="item5" prototype-id="sleep" out-name="item2" content-mode="x" type="task">
+    <display-name><![CDATA[Sleep]]></display-name>
+    <script encoded="false"><![CDATA[//Auto-generated script
+if ( sleepTime != null )  {
+	System.sleep(sleepTime*1000);
+}
+else  {
+	throw "'sleepTime' is NULL";
+}
+]]></script>
+    <in-binding>
+      <bind name="sleepTime" type="number" export-name="sleepTimeInSec">
+        <description><![CDATA[Time to sleep in seconds]]></description>
+      </bind>
+    </in-binding>
+    <out-binding/>
+    <description><![CDATA[Sleep a given number of seconds]]></description>
+    <position y="109.95454545454544" x="505.0"/>
+  </workflow-item>
+  <workflow-item name="item4" out-name="item1" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[System.log("Start cycle " + currentCycle)]]></script>
+    <in-binding>
+      <bind name="currentCycle" type="number" export-name="currentCycle"/>
+    </in-binding>
+    <out-binding/>
+    <position y="37.22727272727273" x="285.0"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="cycleCount">
+      <desc><![CDATA[cycleCount]]></desc>
+    </p-param>
+    <p-param name="sleepTimeInSec">
+      <desc><![CDATA[sleepTimeInSec]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

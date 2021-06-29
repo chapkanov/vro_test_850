@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<description><![CDATA[Export run 68064c34-bba4-4133-b9e4-1082c6fa8256 for workflow 'loop' at 8/28/2020, 9:42:56 AM.]]></description>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/WorkflowToken?id='68064c34-bba4-4133-b9e4-1082c6fa8256'&dunesName='WorkflowToken']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='92ccaa12-eb7d-4502-baa8-06644baccda9'&dunesName='Workflow']]></elm>
+</package>

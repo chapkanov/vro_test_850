@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="18248d48-c608-455f-b707-e2f1dc90eccc" version="0.0.5" api-version="6.0.0" allowed-operations="vfe" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[CreateProperty]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="propertyData" type="Properties"/>
+    <param name="serverFQDN" type="string"/>
+    <param name="controlCenterPort" type="number"/>
+    <param name="rootUser" type="string"/>
+    <param name="rootUserPassword" type="string"/>
+  </input>
+  <output>
+    <param name="propertyProperties" type="Properties"/>
+  </output>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="384.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[var host =  System.getModule("com.vmware.eso.vro").createRestHost(serverFQDN, controlCenterPort, rootUser, rootUserPassword);
+var name = propertyData.get("name");
+var value = propertyData.get("value");
+var description = propertyData.get("description");
+
+propertyProperties = createProperty(host, name, value, description)
+
+function createProperty(host, propertyName, propertyValue, propertyDescription){
+	allProps = getAllProperties(host);
+	
+	System.log("Set property " + propertyName + "=" + propertyValue);
+	var httpMethod = "POST";
+	var queryStringBase = "/vco-controlcenter/api/properties/"
+    var propData = {"key":propertyName,"value":propertyValue,"description":propertyDescription} 
+	allProps.push(propData);
+	
+	var data = {"properties" : allProps}
+	
+	var operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Set property", httpMethod, queryStringBase);
+	var result = System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, JSON.stringify(data));
+	result = JSON.parse(result);
+	
+	return propData;
+}
+
+// Control Center Functions
+function getAllProperties(host){
+	var httpMethod = "GET";
+	var queryString = "/vco-controlcenter/api/properties/"
+
+	operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Get vRO Control Center System properties", httpMethod, queryString);
+	result =  System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, "");
+	System.log(result)
+	return JSON.parse(result).properties;
+}
+]]></script>
+    <in-binding>
+      <bind name="propertyData" type="Properties" export-name="propertyData"/>
+      <bind name="serverFQDN" type="string" export-name="serverFQDN"/>
+      <bind name="controlCenterPort" type="number" export-name="controlCenterPort"/>
+      <bind name="rootUser" type="string" export-name="rootUser"/>
+      <bind name="rootUserPassword" type="string" export-name="rootUserPassword"/>
+    </in-binding>
+    <out-binding>
+      <bind name="propertyProperties" type="Properties" export-name="propertyProperties"/>
+    </out-binding>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="propertyData">
+      <desc><![CDATA[propertyData]]></desc>
+    </p-param>
+    <p-param name="serverFQDN">
+      <desc><![CDATA[serverFQDN]]></desc>
+    </p-param>
+    <p-param name="controlCenterPort">
+      <desc><![CDATA[controlCenterPort]]></desc>
+    </p-param>
+    <p-param name="rootUser">
+      <desc><![CDATA[rootUser]]></desc>
+    </p-param>
+    <p-param name="rootUserPassword">
+      <desc><![CDATA[rootUserPassword]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

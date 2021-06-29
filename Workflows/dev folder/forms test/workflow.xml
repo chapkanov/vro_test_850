@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="ae37dfe9-65d1-46a4-91e0-6a2cf9f333a8" editor-version="2.0" version="0.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>forms test</display-name>
+    <position y="50.0" x="100.0"/>
+    <input>
+        <param name="input_1" type="string"/>
+        <param name="input_2" type="number"/>
+        <param name="input_3" type="Date"/>
+        <param name="input4" type="Array/VC:ArrayUpdateOperation"/>
+        <param name="input" type="Array/CompositeType(field:string,field_1:number):Composite"/>
+        <param name="input_6" type="VC:VirtualMachine"/>
+        <param name="innput7" type="AD:User"/>
+    </input>
+    <output/>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="50.0" x="300.0"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item0" type="task" script-module="com.vmware.library.microsoft.activeDirectory/createUser" comparator="0">
+        <display-name>createUser</display-name>
+        <script encoded="false">//Auto generated script, cannot be modified !
+System.getModule("com.vmware.library.microsoft.activeDirectory").createUser(accountName,domainName,displayName,container);
+</script>
+        <in-binding>
+            <bind name="accountName" type="string" export-name="">
+                <description>The account name for the user (without domain information)</description>
+            </bind>
+            <bind name="domainName" type="string" export-name="input_1">
+                <description>The domain name in Win2000 form (john@sample.com : value must be sample.com)</description>
+            </bind>
+            <bind name="displayName" type="string" export-name="">
+                <description>The display name of the user</description>
+            </bind>
+            <bind name="container" type="AD:User" export-name="innput7">
+                <description>Container for the new user (either a Organizational Unit or a Group)</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description>Add a note to the workflow schema.</description>
+        <position y="60.0" x="180.0"/>
+    </workflow-item>
+</ns2:workflow>

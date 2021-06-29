@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item2" object-name="workflow:name=generic" id="d66b27bd-629d-45a4-b9cd-28f952bda30a" version="0.0.0" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Wait for a workflow execution end]]></display-name>
+  <description><![CDATA[Waits for a workflow execution to end]]></description>
+  <position y="45.40909090909091" x="105.0"/>
+  <input>
+    <param name="wfToken" type="WorkflowToken">
+      <description><![CDATA[The workflow execution to check on]]></description>
+    </param>
+    <param name="time" type="number">
+      <description><![CDATA[The period of time in seconds to wait between checking the workflow execution status]]></description>
+    </param>
+  </input>
+  <output>
+    <param name="outputParameters" type="Properties">
+      <description><![CDATA[Execution output parameters]]></description>
+    </param>
+    <param name="exception" type="string">
+      <description><![CDATA[Error message]]></description>
+    </param>
+  </output>
+  <attrib name="timer" type="Date" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+    <description><![CDATA[Expiration date]]></description>
+  </attrib>
+  <workflow-item name="item2" out-name="item3" type="custom-condition" alt-out-name="item1">
+    <display-name><![CDATA[Check wf is active]]></display-name>
+    <script encoded="false"><![CDATA[var tokenState = wfToken.state;
+
+var ended = (tokenState != "running" && tokenState != "waiting" && tokenState != "waiting-signal");
+
+return ended;]]></script>
+    <in-binding>
+      <bind name="wfToken" type="WorkflowToken" export-name="wfToken"/>
+    </in-binding>
+    <position y="45.40909090909091" x="344.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item4" type="task">
+    <display-name><![CDATA[Set timer]]></display-name>
+    <script encoded="false"><![CDATA[timer = new Date(new Date().getTime() + time * 1000);]]></script>
+    <in-binding>
+      <bind name="time" type="number" export-name="time"/>
+      <bind name="wfToken" type="WorkflowToken" export-name="wfToken"/>
+    </in-binding>
+    <out-binding>
+      <bind name="timer" type="Date" export-name="timer"/>
+    </out-binding>
+    <position y="55.40909090909091" x="624.5"/>
+  </workflow-item>
+  <workflow-item name="item4" out-name="item2" catch-name="item2" throw-bind-name="exception" type="waiting-timer">
+    <display-name><![CDATA[Waiting timer]]></display-name>
+    <in-binding>
+      <bind name="timer.date" type="Date" export-name="timer">
+        <description><![CDATA[This timer item will wait until date and will continue workflow execution.]]></description>
+      </bind>
+    </in-binding>
+    <position y="0.45454545454545325" x="504.5"/>
+  </workflow-item>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="172.68181818181816" x="385.0"/>
+  </workflow-item>
+  <workflow-item name="item3" out-name="item0" type="task">
+    <display-name><![CDATA[Set outputs and exception]]></display-name>
+    <script encoded="false"><![CDATA[outputParameters = wfToken.getOutputParameters();
+exception = wfToken.exception;]]></script>
+    <in-binding>
+      <bind name="wfToken" type="WorkflowToken" export-name="wfToken"/>
+    </in-binding>
+    <out-binding>
+      <bind name="outputParameters" type="Properties" export-name="outputParameters"/>
+      <bind name="exception" type="string" export-name="exception"/>
+    </out-binding>
+    <position y="119.04545454545453" x="345.0"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="wfToken">
+      <desc><![CDATA[The workflow execution to check on]]></desc>
+    </p-param>
+    <p-param name="time">
+      <desc><![CDATA[The period of time in seconds to wait between checking the workflow execution status]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

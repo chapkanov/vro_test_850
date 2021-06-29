@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="7f623c50-b47e-4eb8-bfe1-af8f808545e8" editor-version="2.0" version="0.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="1">
+    <display-name>ResumeTestWorkflow</display-name>
+    <position y="52.07207207207206" x="88.1081081081081"/>
+    <input>
+        <param name="fail" type="boolean"/>
+    </input>
+    <output/>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="49.56521739130436" x="553.9130434782609"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item2" type="task" comparator="0">
+        <display-name>Before failure</display-name>
+        <script encoded="false">System.log("Before failure");</script>
+        <in-binding/>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="59.56521739130436" x="166.08695652173915"/>
+    </workflow-item>
+    <workflow-item name="item2" out-name="item3" throw-bind-name="" type="task" comparator="0">
+        <display-name>Failure</display-name>
+        <script encoded="false">try {&#13;
+  if(fail==false){&#13;
+      System.log("fail is false")&#13;
+  }&#13;
+} catch (error) {&#13;
+  console.error(ErrorEvent);&#13;
+  }</script>
+        <in-binding>
+            <bind name="fail" type="boolean" export-name="fail"/>
+        </in-binding>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="59.56521739130436" x="287.82608695652175"/>
+    </workflow-item>
+    <workflow-item name="item3" out-name="item0" type="task" comparator="0">
+        <display-name>After failure</display-name>
+        <script encoded="false">System.log("After failure");</script>
+        <in-binding/>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="59.56521739130436" x="409.5652173913044"/>
+    </workflow-item>
+    <presentation/>
+</ns2:workflow>

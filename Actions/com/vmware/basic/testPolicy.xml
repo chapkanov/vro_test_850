@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="testPolicy" result-type="string" api-version="6.0.0" id="b4ad854e-8db3-4a45-8d1a-0ec48d6f96d9" version="0.0.1" category-name="com.vmware.basic">
+  <script encoded="false"><![CDATA[System.log("Current time is: " +  + Date(Date.now()));]]></script>
+</dunes-script-module>

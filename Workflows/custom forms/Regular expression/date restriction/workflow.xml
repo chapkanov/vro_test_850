@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item0" object-name="workflow:name=generic" id="cd9a0265-8a2a-4251-89d9-a0e2b7bbe4b0" version="0.0.1" api-version="6.0.0" allowed-operations="vfe" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[date restriction]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="date_after" type="Date"/>
+    <param name="date_before" type="Date"/>
+    <param name="date" type="Date"/>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="50.0" x="240.0"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="date_after">
+      <desc><![CDATA[date_after]]></desc>
+    </p-param>
+    <p-param name="date_before">
+      <desc><![CDATA[date_before]]></desc>
+    </p-param>
+    <p-param name="date">
+      <desc><![CDATA[date]]></desc>
+      <p-qual kind="ognl" name="beforeDate" type="Date"><![CDATA[#date_before]]></p-qual>
+      <p-qual kind="ognl" name="afterDate" type="Date"><![CDATA[#date_after]]></p-qual>
+    </p-param>
+  </presentation>
+</workflow>

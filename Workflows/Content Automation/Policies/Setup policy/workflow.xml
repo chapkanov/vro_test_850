@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="99363699-7d4c-4b77-9864-a904bed50979" version="0.0.2" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Setup policy]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="policyData" type="Properties"/>
+    <param name="user" type="string"/>
+    <param name="pass" type="string"/>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="384.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[var allPolicies = Server.findAllForType("Policy");
+
+
+var policyName = policyData.get("name")
+var startPolicy = policyData.get("status").toLowerCase() == "running"
+	
+for each(var policyObj in allPolicies){
+	var targetPolicy;
+    if (policyObj.name == policyName){
+		System.log("policy with name " + policyName + " found");
+		targetPolicy = policyObj;
+		break;
+    }
+}
+if(targetPolicy == null){
+	throw "No policy with name " + policyName + " was found"
+}	
+
+System.log("Set policy credentials");
+var newCredential = new Credential(user, pass)
+System.getModule("com.vmware.library.policy").setPolicyCredential(targetPolicy, newCredential)
+
+if(startPolicy){
+	System.log("Start policy " + policyName)
+	System.getModule("com.vmware.library.policy").startPolicy(targetPolicy)
+}else{
+	System.log("Policy " + policyName + " will not be started")
+}
+]]></script>
+    <in-binding>
+      <bind name="pass" type="string" export-name="pass"/>
+      <bind name="policyData" type="Properties" export-name="policyData"/>
+      <bind name="user" type="string" export-name="user"/>
+    </in-binding>
+    <out-binding/>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="policyData">
+      <desc><![CDATA[policyData]]></desc>
+    </p-param>
+    <p-param name="user">
+      <desc><![CDATA[user]]></desc>
+    </p-param>
+    <p-param name="pass">
+      <desc><![CDATA[pass]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="bb1c596b-d738-49d1-85fd-017b883db428" version="0.2.0" api-version="6.0.0" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Test Workflow]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="newVM" type="VC:VirtualMachine"/>
+    <param name="vmResourcePool" type="VC:ResourcePool"/>
+    <param name="vmDatastore" type="VC:Datastore"/>
+    <param name="vmNetwork" type="VC:Network"/>
+    <param name="vmFolder" type="VC:VmFolder"/>
+    <param name="vmHost" type="VC:HostSystem"/>
+    <param name="vmGuestOs" type="VC:VirtualMachineGuestOsIdentifier"/>
+    <param name="diskThinProvisioned" type="boolean"/>
+    <param name="vmDiskSize" type="number"/>
+    <param name="vmMemorySize" type="number">
+      <description><![CDATA[Virtual machine's memory size in MB?]]></description>
+    </param>
+    <param name="vmNbOfCpus" type="number"/>
+    <param name="virtualMachineName" type="string">
+      <description><![CDATA[Virtual machine name.]]></description>
+    </param>
+  </input>
+  <output>
+    <param name="newVM_1" type="VC:VirtualMachine"/>
+  </output>
+  <attrib name="vmName" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="50.0" x="400.0"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item2" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[vmName=virtualMachineName + "test";]]></script>
+    <in-binding>
+      <bind name="virtualMachineName" type="string" export-name="virtualMachineName"/>
+    </in-binding>
+    <out-binding>
+      <bind name="vmName" type="string" export-name="vmName"/>
+    </out-binding>
+    <description><![CDATA[Simple task with custom script capability.]]></description>
+    <position y="60.0" x="160.0"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item0" type="link" linked-workflow-id="BD808080808080808080808080808080A3C280800122528313869552e41805bb1">
+    <display-name><![CDATA[Create simple virtual machine]]></display-name>
+    <in-binding>
+      <bind name="vmName" type="string" export-name="vmName">
+        <description><![CDATA[Virtual machine name]]></description>
+      </bind>
+      <bind name="vmGuestOs" type="VC:VirtualMachineGuestOsIdentifier" export-name="vmGuestOs">
+        <description><![CDATA[Guest operating system to use with the virtual machine]]></description>
+      </bind>
+      <bind name="vmFolder" type="VC:VmFolder" export-name="vmFolder">
+        <description><![CDATA[Virtual machine folder]]></description>
+      </bind>
+      <bind name="vmResourcePool" type="VC:ResourcePool" export-name="vmResourcePool">
+        <description><![CDATA[Resource pool in which to create the virtual machine]]></description>
+      </bind>
+      <bind name="vmHost" type="VC:HostSystem" export-name="vmHost">
+        <description><![CDATA[Host on which to create the virtual machine]]></description>
+      </bind>
+      <bind name="vmDiskSize" type="number" export-name="vmDiskSize">
+        <description><![CDATA[Size of virtual disk in GB]]></description>
+      </bind>
+      <bind name="vmMemorySize" type="number" export-name="vmMemorySize">
+        <description><![CDATA[Virtual machine's memory size in MB]]></description>
+      </bind>
+      <bind name="vmNbOfCpus" type="number" export-name="vmNbOfCpus">
+        <description><![CDATA[Number of virtual processors]]></description>
+      </bind>
+      <bind name="vmNetwork" type="VC:Network" export-name="vmNetwork">
+        <description><![CDATA[The network to connect to]]></description>
+      </bind>
+      <bind name="vmDatastore" type="VC:Datastore" export-name="vmDatastore">
+        <description><![CDATA[Datastore in which to store the virtual machine files]]></description>
+      </bind>
+      <bind name="diskThinProvisioned" type="boolean" export-name="diskThinProvisioned">
+        <description><![CDATA[Make disk thin-provisioned?]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="newVM" type="VC:VirtualMachine" export-name="newVM_1">
+        <description><![CDATA[The newly created VM]]></description>
+      </bind>
+    </out-binding>
+    <description><![CDATA[ ]]></description>
+    <position y="60.0" x="250.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

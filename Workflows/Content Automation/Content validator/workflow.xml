@@ -1,0 +1,393 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="a08777b0-a290-41ec-ae7d-a0d5ddec1d91" version="0.0.22" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Content validator]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="serverFQDN" type="string"/>
+    <param name="port" type="string"/>
+    <param name="user" type="string"/>
+    <param name="pass" type="string"/>
+  </input>
+  <attrib name="systemResultData" type="ConfigurationElement" read-only="false">
+    <value encoded="n"><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='1c574c1e-6778-40e2-ab35-0de1289c5fa7'&dunesName='ConfigurationElement']]></value>
+  </attrib>
+  <attrib name="expectedData" type="ConfigurationElement" read-only="false">
+    <value encoded="n"><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='3e27bff6-a569-4af3-8ad6-321d86e62bfc'&dunesName='ConfigurationElement']]></value>
+  </attrib>
+  <attrib name="debugLog" type="boolean" read-only="false">
+    <value encoded="n"><![CDATA[false]]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="384.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Validator]]></display-name>
+    <script encoded="false"><![CDATA[
+var host =  System.getModule("com.vmware.eso.vro").createRestHost(serverFQDN, port, user, pass);
+
+if(systemResultData.getAttributeWithKey("tokens")){
+	System.log("********************************************");
+	System.log("* Validate workflow executions")
+	System.log("********************************************");
+	var createdTokens = systemResultData.getAttributeWithKey("tokens").value;
+	var expectedTokesData = expectedData.getAttributeWithKey("tokens").value;
+	
+	for each(var createdToken in createdTokens){
+		if(createdToken.currentWorkflow == null)
+			continue;
+			validateToken(createdToken, expectedTokesData, host)
+	}
+}
+
+if(systemResultData.getAttributeWithKey("tasks")){
+	System.log("********************************************");
+	System.log("* Validate sheduled workflow executions")
+	System.log("********************************************");
+	var expectedTasks = expectedData.getAttributeWithKey("tasks").value;
+
+	for each(var expectedTask in expectedTasks){
+		validateScheduledTask(expectedTask, host)
+	}
+}
+
+if(systemResultData.getAttributeWithKey("policyTemplates")){
+	System.log("********************************************");
+	System.log("* Validate Policy templates")
+	System.log("********************************************");
+	var expectedPoliciesData = expectedData.getAttributeWithKey("policyTemplates").value;
+	var systemPolicyTemplates = systemResultData.getAttributeWithKey("policyTemplates").value;
+
+	for each(var createdPolicyTemplateEntity in systemPolicyTemplates){
+		System.log("\t Check policy template with name [" + createdPolicyTemplateEntity.name + "]")
+		validatePolicyTemplate(createdPolicyTemplateEntity.name, expectedPoliciesData, host)
+	}
+}
+
+if(systemResultData.getAttributeWithKey("policies")){
+	System.log("********************************************");
+	System.log("* Validate Policies")
+	System.log("********************************************");
+	var policyData = expectedData.getAttributeWithKey("policies").value;
+	var systemPolicies = systemResultData.getAttributeWithKey("policies").value;
+
+	for each(var createdPolicyEntity in systemPolicies){
+		System.log("\t Check policy with name [" + createdPolicyEntity.name + "]")
+		validatePolicy(createdPolicyEntity.name, policyData, host)
+	}
+}
+
+// TOKEN FUNCTIONS
+function getTokenById(host, workflowID, executionID){
+	var httpMethod = "GET";
+	var queryString = "/vco/api/workflows/"+ workflowID + "/executions/" + executionID;
+
+	operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Get workflow execution", httpMethod, queryString);
+	result =  System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, "");
+
+	return JSON.parse(result);
+}
+
+function validateToken(tokenObject, expectedTokesData, host){
+	var workflowId = tokenObject.currentWorkflow.id;
+	var	expectedTokenData = getTokenInputDataForWorkflowWithID(workflowId, expectedTokesData);
+	
+	System.log("\t Validate workflow execution with id =["+ tokenObject.id + "] | Name: " + tokenObject.name)
+	var resultToken = getTokenById(host, tokenObject.currentWorkflow.id, tokenObject.id)
+	isEquals(resultToken.id, tokenObject.id, "token id is different from expected.", "Check workflow token id")
+	isEquals(resultToken.name, tokenObject.name, "token name is different from expected.", "Check token name")
+	isEquals(resultToken.startDate, tokenObject["start-date"], "token start date is different from expected.", "Check token start date")
+	isEquals(resultToken.runningUserName, tokenObject["started-by"], "token started by is different from expected.", "Check token run user")
+	
+	var waitingUserInteractionWorkflowId = "3bdeb48d-80a8-48ef-828f-a19bc3f7a02b" 
+	if(resultToken.href.indexOf(waitingUserInteractionWorkflowId)!= -1){
+		isEquals(resultToken.state, "waiting", "Incorrect workflow execution state", "Check token execution state");
+	}else{
+		isOneOf(resultToken.state, ["running", "completed"], "Incorrect workflow execution state", "Check token execution state");
+	}
+
+	isTrue(validateTokenInputData(tokenObject, expectedTokenData), "Token with expected input values no found", "Check token input values");
+}
+
+
+function getTokenInputDataForWorkflowWithID(workflowID, tokens){
+
+	for each(var token in tokens){
+
+		if(token.get(workflowID)!= null){
+			return  token.get(workflowID);
+		}
+	}
+	return null;
+}
+
+
+function validateTokenInputData(actualTokenData, expectedTokesDataForWorkflow){
+	for each(var expectedTokenData in expectedTokesDataForWorkflow){
+
+		if(expectedTokenData.keys.length  == actualTokenData.getInputParameters().keys.length){
+			var result = true
+			for each(var inputName in actualTokenData.getInputParameters().keys){
+				System.debug("\t\t\t\t Actual : " + inputName + "=" + actualTokenData.getInputParameters().get(inputName))
+				System.debug("\t\t\t\t Expected : " + inputName + "=" + expectedTokenData.get(inputName))
+
+				result = result && (actualTokenData.getInputParameters().get(inputName) == expectedTokenData.get(inputName))
+			}
+			if(result == true){
+				return result;
+			}
+		}
+	}
+	return false;
+}
+
+// TASKS FUNCTIONS
+
+function getTaskById(host, taskId){
+	var httpMethod = "GET";
+	var queryString = "/vco/api/tasks/"+ taskId;
+
+	operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Get task", httpMethod, queryString);
+	result =  System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, "");
+
+	return JSON.parse(result);
+}
+
+function getTaskIdByName(host, taskName){
+	var httpMethod = "GET";
+	var queryString = "/vco/api/tasks/";
+
+	operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Get tasks", httpMethod, queryString);
+	tasks =  JSON.parse(System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, ""));
+
+	for each (var taskData in tasks.relations.link){
+			if(taskData.attributes && isAttributeWithValue(taskData.attributes, taskName)){
+			result = taskData.href.split("/");
+			result.pop()
+			var id = result.pop();
+			return id;
+		}
+	}
+
+	throw ("Scheduled task with  name " + taskName + " not found")
+}
+
+function validateScheduledTask(expectedTaskData, host){
+	var taskName = expectedTaskData.name;
+	
+	System.log("\t Validate scheduled task with name = ["+ taskName + "]")
+	var taskId = getTaskIdByName(host, taskName);
+	var systemTask = getTaskById(host, taskId);
+	isEquals(systemTask.id, taskId, "task id is different from expected.", "Check task id")
+	isEquals(systemTask.name, taskName, "task name is different from expected.", "Check task name")
+	isEquals(systemTask.workflow.id, expectedTaskData["workflow-id"], "task workflow is different from expected.", "Check task workflow")
+	isEquals(systemTask["recurrence-cycle"], expectedTaskData.recurrence, "task recurrence is different from expected.", "Check task recurrence")
+}
+
+// POLICY & POLICY TEMPLATE FUNCTIONS
+
+function getPolicyData(entityName, policyData){
+	for each(var policyEntityData in policyData){
+		if(policyEntityData.name == entityName){
+			return policyEntityData;
+		}
+	}
+	
+	return null;
+}
+
+function validatePolicy(policyName, expectedPoliciesData, host){
+	var expectedPolicyData = getPolicyData(policyName, expectedPoliciesData);
+	var policyId = getPolicyEntyIdByName(host, policyName, false);
+	var systemPolicy = getPolicyEntityById(policyId, host, false);
+
+	isEquals(systemPolicy.name, expectedPolicyData.name, "Policy name is different from expected.", "Check policy name")
+	isEquals(systemPolicy.description, expectedPolicyData.description, "Policy description is different from expected.", "Check policy description")
+	isEquals(systemPolicy.priority, expectedPolicyData.priority, "Policy priority is different from expected.", "Check policy priority")
+	isEquals(systemPolicy.startup, expectedPolicyData.startup, "Policy startup is different from expected.", "Check policy startup")
+	isEquals(systemPolicy.state, expectedPolicyData.state, "Policy state is different from expected.", "Check policy state")
+//	isEquals(systemPolicy["started-by"], expectedPolicyData["started-by"], "Policy started-by is different from expected.", "Check started-by")
+	
+	isEqualBindings(systemPolicy["event-handler"], expectedPolicyData["event-handler"]);
+	isEqualParameters(systemPolicy.parameters, expectedPolicyData.parameters);
+	isEqualPolicyItems(systemPolicy["policy-items"], expectedPolicyData["policy-items"]);
+}
+
+function validatePolicyTemplate(policyTemplateName, expectedPoliciesData, host){
+	var expectedPolicyTemplateData = getPolicyData(policyTemplateName, expectedPoliciesData);
+	var policyTemplateId = getPolicyEntyIdByName(host, policyTemplateName, true);
+	var systemPolicyTemplate = getPolicyEntityById(policyTemplateId, host, true);
+	
+	isEquals(systemPolicyTemplate.name, expectedPolicyTemplateData.name, "Policy template name is different from expected.", "Check policy template name")
+	isEquals(systemPolicyTemplate.description, expectedPolicyTemplateData.description, "Policy template description is different from expected.", "Check policy template description")
+	isEqualBindings(systemPolicyTemplate["event-handler"], expectedPolicyTemplateData["event-handler"]);
+	isEqualParameters(systemPolicyTemplate.parameters, expectedPolicyTemplateData.parameters);
+}
+
+function isEqualBindings(entityHandlerArrayData, expectedHandlerArrayData){
+	isEquals(entityHandlerArrayData.length, expectedHandlerArrayData.length, "Policy template event handler size si different than expected","Check event handler array size");
+	System.log("\t\t* Check Bindings")
+	System.log("\t\t***********************************")
+	for(index = 0; index < entityHandlerArrayData.length; index++ ){ 
+		var entityHandlerData = entityHandlerArrayData[index];
+		var expectedHandlerData = expectedHandlerArrayData[index];
+		
+		isEquals(entityHandlerData.type, expectedHandlerData.type, "Policy template event-handler type is different from expected.", "Check policy template event handler type");
+		isEquals(entityHandlerData.eventId, expectedHandlerData.eventId, "Policy template event-handler eventId is different from expected.", "Check policy template event handler eventId");
+		
+		if(entityHandlerData.workflow){
+			isEquals(entityHandlerData.workflow.id, expectedHandlerData.workflow.id, "Policy template event-handler workflow id is different from expected.", "Check policy template event handler workflow id");
+		}
+		
+		if(entityHandlerData.bindings){
+			for each(var binding in entityHandlerData.bindings){
+				var bindingName = binding.name;
+				expectedBinding = getBindingByName(bindingName, expectedHandlerData.bindings);
+				if (expectedBinding == null) { throw("Binding with name " + bindingName + " not found in the expected data" )}
+				
+				isEquals(binding.name, expectedBinding.name, "Policy template event-handler binding with name " + bindingName +" is different from expected.", "Check policy template event handler binding name");
+				isEquals(binding.type, expectedBinding.type, "Policy template event-handler binding / type with name " + bindingName +" is different from expected.", "Check policy template event handler binding type ");
+				isEquals(binding["export-name"], expectedBinding["export-name"], "Policy template event-handler binding  / export-name with name " + bindingName +" is different from expected.", "Check policy template event handler binding export-name");
+			}
+		}
+		
+	}
+	System.log("\t\t***********************************")
+}
+
+function getBindingByName(bindingName, bindings){
+	for each(var binding in bindings){
+		if(binding.name == bindingName){
+			return binding
+		}
+	}
+	return null;
+}
+
+function getPolicyEntityById(id, host, isTemplate){
+	var httpMethod = "GET";
+	var queryString = isTemplate ? "/vco/api/policies/templates/" + id :"/vco/api/policies/" + id;
+	var operationDescription = isTemplate ? " Get policy template by id" : "Get policy by id";
+
+	operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, operationDescription, httpMethod, queryString);
+	result =  System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, "");
+
+	return JSON.parse(result);
+}
+
+function isEqualParameters(entityParametersArrayData, expectedParametersArrayData){
+	isEquals(entityParametersArrayData.length, expectedParametersArrayData.length, "Policy template parameters count is different than expected","Check policy template parameters count");
+	System.log("\t\t* Check parameters")
+	System.log("\t\t***********************************")
+	for(index = 0; index < entityParametersArrayData.length; index++ ){ 
+		var entityParamData = entityParametersArrayData[index];
+		var expectedParamData = expectedParametersArrayData[index];
+		
+		isEquals(entityParamData.name, expectedParamData.name, "Policy template parameter name is different from expected.", "Check policy template parameter name");		
+		isEquals(entityParamData.type, expectedParamData.type, "Policy template parameter type is different from expected.", "Check policy template parameter type");
+	}
+	System.log("\t\t***********************************")
+}
+
+function isEqualPolicyItems(entityPolicyItemsArrayData, expectedPolicyItemsArrayData){
+	isEquals(entityPolicyItemsArrayData.length, expectedPolicyItemsArrayData.length, "Policy / policy-items count is different than expected", "Check policy / policy-items parameters count");
+	System.log("\t\t* Check policy items")
+	System.log("\t\t***********************************")
+	for(index = 0; index < entityPolicyItemsArrayData.length; index++ ){ 
+		var entitypolicyItemData = entityPolicyItemsArrayData[index];
+		var expectedPolicyItemData = expectedPolicyItemsArrayData[index];
+		
+		isEquals(entitypolicyItemData.name, expectedPolicyItemData.name, "Policy / policy-item  name is different from expected.", "Check policy / policy item name");		
+	}
+	System.log("\t\t***********************************")
+}
+
+function getPolicyEntyIdByName(host, policyEntityName, isTemplate){
+	var httpMethod = "GET";
+	var queryString = isTemplate ? "/vco/api/policies/templates" :"/vco/api/policies/";
+	var operationDescription = isTemplate ? " Get policy templates" : "Get policies";
+
+	operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, operationDescription, httpMethod, queryString);
+	entityData =  JSON.parse(System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, ""));
+	var entities = isTemplate ? entityData.link : entityData.relations.link;
+
+	for each (var entity in entities){
+			if(entity.attributes && isAttributeWithValue(entity.attributes, policyEntityName)){
+			result = entity.href.split("/");
+			result.pop()
+			var id = result.pop();
+			return id;
+		}
+	}
+	var entityType = isTemplate ? "Policy template" : "Policy";
+
+	throw (entityType + " with  name " + policyEntityName + " not found")
+}
+
+
+// VALIDATION FUNCTIONS
+
+function isOneOf(value, expectedValues, errorMessage, logMessage){
+	if(logMessage){
+		System.log("\t\t* " + logMessage);
+	}
+	if(expectedValues.indexOf(value)== -1){
+		throw(errorMessage + ":  Value = [" + value + "] is not one of the expected values [" + expectedValues + "]");
+	}
+}
+
+function isEquals(value, expectedValue, errorMessage, logMessage){
+	if(logMessage){
+		System.log("\t\t* " + logMessage);
+	}
+	if(value != expectedValue){
+		throw(errorMessage + ":  Value = [" + value + "] | Expected Value = [" + expectedValue + "]");
+	}
+}
+
+function isTrue(value, errorMessage, logMessage){
+	if(logMessage){
+		System.log("\t\t* " + logMessage);
+	}
+	if(value == false){
+		throw(errorMessage);
+	}
+}
+
+function isAttributeWithValue(attributes, attributeValue){
+	for each(var attribute in attributes){
+		if(attribute.name == "name" && attribute.value == attributeValue){
+			return true
+		}
+	}
+	return false
+}
+
+
+]]></script>
+    <in-binding>
+      <bind name="serverFQDN" type="string" export-name="serverFQDN"/>
+      <bind name="port" type="string" export-name="port"/>
+      <bind name="user" type="string" export-name="user"/>
+      <bind name="pass" type="string" export-name="pass"/>
+      <bind name="systemResultData" type="ConfigurationElement" export-name="systemResultData"/>
+      <bind name="expectedData" type="ConfigurationElement" export-name="expectedData"/>
+      <bind name="debugLog" type="boolean" export-name="debugLog"/>
+    </in-binding>
+    <out-binding/>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="serverFQDN">
+      <desc><![CDATA[serverFQDN]]></desc>
+    </p-param>
+    <p-param name="port">
+      <desc><![CDATA[port]]></desc>
+    </p-param>
+    <p-param name="user">
+      <desc><![CDATA[user]]></desc>
+    </p-param>
+    <p-param name="pass">
+      <desc><![CDATA[pass]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

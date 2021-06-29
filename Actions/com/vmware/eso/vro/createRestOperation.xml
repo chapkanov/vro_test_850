@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="createRestOperation" result-type="REST:RESTOperation" api-version="6.0.0" id="4d5d4f71-4c59-4c9d-9ec9-d15d60489790" version="0.0.0" allowed-operations="evf" category-name="com.vmware.eso.vro">
+  <param n="host" t="REST:RESTHost"/>
+  <param n="operationName" t="string"/>
+  <param n="restMethod" t="string"/>
+  <param n="urlTemplate" t="string"/>
+  <script encoded="false"><![CDATA[System.debug("* Trigger " + this.name + " action");
+System.debug("\tCreating operation: " + operationName);
+var operation = new RESTOperation(operationName);
+
+operation.method = restMethod;
+
+if (restMethod.toUpperCase() === "POST" || restMethod.toUpperCase() === "PUT" || 
+    restMethod.toUpperCase() === "PATCH" || restMethod.toUpperCase() === "DELETE" ||  
+    restMethod.toUpperCase() === "GET") {
+
+	operation.defaultContentType = "application/json";
+	operation.addMandatoryHeaderParameter("Content-Type");
+}
+
+operation.urlTemplate = urlTemplate;
+operation.host = host;
+
+return operation;]]></script>
+</dunes-script-module>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="2b451b95-43cf-4a23-a86c-b4e68a4f8009"  version="0.0.4" api-version="3.1.0" allowed-operations="fve" restartMode="1" resumeFromFailedMode="0" >
+<display-name><![CDATA[Set administrator or root password]]></display-name>
+<description><![CDATA[Workflow template to use for vCAC extensibility
+
+Input parameters can be used using vCAC VM properties using the format ExternalWFStubs.[workflow stub name].[vCO input parameter name]. If using plug-in types you need to pass their unique vCO IDs.
+
+Input parameters was tested successfully with : 
+- string
+- plug-in input types
+- number
+- boolean
+]]></description>
+<position x='100.0' y='50.0'/>
+<input><param name='vCACVm' type='vCAC:VirtualMachine' >
+<description><![CDATA[vCAC virtual machine]]></description>
+</param>
+<param name='vCenterVm' type='VC:VirtualMachine' >
+<description><![CDATA[VC virtual machine]]></description>
+</param>
+<param name='virtualMachineEntity' type='vCAC:Entity' >
+<description><![CDATA[vCAC virtual machine entity]]></description>
+</param>
+<param name='vCACHost' type='vCAC:VCACHost' >
+<description><![CDATA[vCAC host]]></description>
+</param>
+<param name='externalWFStub' type='string' >
+<description><![CDATA[External workflow stub]]></description>
+</param>
+<param name='vCACVmProperties' type='Properties' >
+<description><![CDATA[vCAC virtual machine properties]]></description>
+</param>
+</input><output><param name='result' type='number' >
+<description><![CDATA[0 = OK, Negative = Error, Positive = Number of values returned, after error text]]></description>
+</param>
+<param name='errorText' type='string' >
+<description><![CDATA[Error text, if any]]></description>
+</param>
+<param name='outputText' type='string' >
+<description><![CDATA[Result of running the SSH command]]></description>
+</param>
+</output><attrib name='OS' type='string' read-only='false' ><value encoded='n'><![CDATA[]]></value>
+</attrib>
+<attrib name='hostNameOrIP' type='string' read-only='false' ><value encoded='n'><![CDATA[]]></value>
+<description><![CDATA[Hostname or IP address of the SSH host]]></description>
+</attrib>
+<attrib name='username' type='string' read-only='false' ><value encoded='n'><![CDATA[]]></value>
+<description><![CDATA[Username]]></description>
+</attrib>
+<attrib name='password' type='SecureString' read-only='false' ><description><![CDATA[Password]]></description>
+</attrib>
+<attrib name='cmd' type='string' read-only='false' ><value encoded='n'><![CDATA[]]></value>
+<description><![CDATA[The SSH command to run]]></description>
+</attrib>
+<attrib name='interactiveSession' type='boolean' read-only='false' ><description><![CDATA[This is set to true if the client wants an interactive session in the guest.]]></description>
+</attrib>
+<attrib name='programPath' type='string' read-only='false' ><value encoded='n'><![CDATA[C:\windows\system32\net.exe]]></value>
+<description><![CDATA[The absolute path to the program to start. For Linux guest operating systems, /bin/bash is used to start the program.  For Solaris guest operating systems, /bin/bash is used to start the program if it exists. Otherwise /bin/sh is used. If /bin/sh is used, then the process ID returned will be that of the shell used to start the program, rather than the program itself, due to the differences in how /bin/sh and /bin/bash work. This PID will still be usable for watching the process with this API to find its exit code and elapsed time. ]]></description>
+</attrib>
+<attrib name='arguments' type='string' read-only='false' ><value encoded='n'><![CDATA[]]></value>
+<description><![CDATA[The arguments to the program. In Linux and Solaris guest operating systems, the program will be executed by a guest shell. This allows stdio redirection, but may also require that characters which must be escaped to the shell also be escaped on the command line provided. For Windows guest operating systems, prefixing the command with "cmd /c" can provide stdio redirection. ]]></description>
+</attrib>
+<attrib name='newPassword' type='SecureString' read-only='false' ><value encoded='n'><![CDATA[__NULL__]]></value>
+</attrib>
+<workflow-item name='item0' type='end' end-mode='0' >
+<position x='664.5' y='45.40909090909091'/>
+</workflow-item>
+<workflow-item name='item1' out-name='item2' type='task' >
+<display-name><![CDATA[Display inputs]]></display-name>
+<script encoded='false'><![CDATA[System.log("Workflow started from workflow stub " + externalWFStub + " on vCAC host " + vCACHost.displayName);
+System.log("Got vCAC virtual machine " + vCACVm.virtualMachineName);
+System.log("Matching virtual machine entity " + virtualMachineEntity.keyString);
+/*
+If you do not get a vApp or VM it is likely that it is not accessible at the stage of the vCAC process
+if (vCloudVApp != null) {
+	System.log("Got vCloud vApp " + vCloudVApp.name);
+}
+*/
+
+if (vCenterVm != null) {
+	System.log("Got vCloud VM " + vCenterVm.name);
+}
+				
+//Displaying vCAC VM properties
+if (vCACVmProperties != null) {
+	var log = "";
+	log += "vCAC VM properties :\n";
+	var array = new Array();
+	for each (var key in vCACVmProperties.keys) {
+		array.push(key + " : " + vCACVmProperties.get(key));	
+	}
+	array.sort();
+	
+	for each (var line in array) {
+		log += "\t" + line + "\n";
+	}	
+	System.log(log);	
+}
+
+//first we get the OS and pass it to the decision of what to run
+OS=vCACVmProperties.get('extendingclouds.os'); 
+//next we get the user input for the new password
+newPassword=vCACVmProperties.get('extendingclouds.admin.pass'); //if your custom property is different then edit this
+
+if (OS=='Linux'){
+		username='root';
+		password='P@ssw0rd'; //edit this for your default root password
+		hostNameOrIP=vCACVmProperties.get('VirtualMachine.Network0.Address'); //get the assigned IP so we can connect SSH to the linux host
+		cmd='echo -e "' + newPassword + '\n' + newPassword + '" | (passwd --stdin root)'; //command that is run on the linux host
+	}
+	else
+	{
+		username='administrator';
+		password='P@ssw0rd'; //edit this for you default admin password
+		arguments='user administrator' + ' ' + newPassword;
+	}]]></script>
+<in-binding><bind name='vCACVm' type='vCAC:VirtualMachine' export-name="vCACVm" ></bind>
+<bind name='vCenterVm' type='VC:VirtualMachine' export-name="vCenterVm" ></bind>
+<bind name='virtualMachineEntity' type='vCAC:Entity' export-name="virtualMachineEntity" ></bind>
+<bind name='vCACHost' type='vCAC:VCACHost' export-name="vCACHost" ></bind>
+<bind name='externalWFStub' type='string' export-name="externalWFStub" ></bind>
+<bind name='vCACVmProperties' type='Properties' export-name="vCACVmProperties" ></bind>
+<bind name='newPassword' type='SecureString' export-name="newPassword" ></bind>
+</in-binding><out-binding><bind name='OS' type='string' export-name="OS" ></bind>
+<bind name='hostNameOrIP' type='string' export-name="hostNameOrIP" ></bind>
+<bind name='username' type='string' export-name="username" ></bind>
+<bind name='password' type='SecureString' export-name="password" ></bind>
+<bind name='arguments' type='string' export-name="arguments" ></bind>
+<bind name='cmd' type='string' export-name="cmd" ></bind>
+<bind name='newPassword' type='SecureString' export-name="newPassword" ></bind>
+</out-binding><position x='204.5' y='55.40909090909091'/>
+</workflow-item>
+<workflow-item name='item2' out-name='item4' type='condition' alt-out-name='item5' comparator='0' >
+<display-name><![CDATA[Decision]]></display-name>
+<script encoded='false'><![CDATA[//Generated by the system, cannot be edited
+return (OS == "Linux") ;]]></script>
+<in-binding><bind name='OS' type='string' export-name="OS" ></bind>
+</in-binding><condition name='OS' type='string' comparator='0'><![CDATA[Linux]]></condition>
+<position x='344.5' y='45.40909090909091'/>
+</workflow-item>
+<workflow-item name='item3' type='end' end-mode='0' >
+<position x='384.5' y='172.68181818181816'/>
+</workflow-item>
+<workflow-item name='item4' out-name='item0' type='link' linked-workflow-id='dd0b0666-06a7-4870-a2b2-511d2fcd29f6' >
+<display-name><![CDATA[Set root password]]></display-name>
+<in-binding><bind name='hostNameOrIP' type='string' export-name="hostNameOrIP" ><description><![CDATA[Hostname or IP address of the SSH host]]></description>
+</bind>
+<bind name='username' type='string' export-name="username" ><description><![CDATA[Username]]></description>
+</bind>
+<bind name='password' type='SecureString' export-name="password" ><description><![CDATA[Password]]></description>
+</bind>
+<bind name='cmd' type='string' export-name="cmd" ><description><![CDATA[The SSH command to run]]></description>
+</bind>
+</in-binding><out-binding><bind name='result' type='number' export-name="result" ><description><![CDATA[0 = OK, Negative = Error, Positive = Number of values returned, after error text]]></description>
+</bind>
+<bind name='errorText' type='string' export-name="errorText" ><description><![CDATA[Error text, if any]]></description>
+</bind>
+<bind name='outputText' type='string' export-name="outputText" ><description><![CDATA[Result of running the SSH command]]></description>
+</bind>
+</out-binding><description><![CDATA[Runs an SSH command.]]></description>
+<position x='484.5' y='55.40909090909091'/>
+</workflow-item>
+<workflow-item name='item5' out-name='item3' type='link' linked-workflow-id='f2162101-4d47-4959-b576-36445858c165' >
+<display-name><![CDATA[Set administrator  password]]></display-name>
+<in-binding><bind name='vmUsername' type='string' export-name="username" ><description><![CDATA[Username for the virtual machine]]></description>
+</bind>
+<bind name='vmPassword' type='SecureString' export-name="password" ><description><![CDATA[Password for the virtual machine]]></description>
+</bind>
+<bind name='vm' type='VC:VirtualMachine' export-name="vCenterVm" ><description><![CDATA[Virtual machine]]></description>
+</bind>
+<bind name='interactiveSession' type='boolean' export-name="interactiveSession" ><description><![CDATA[This is set to true if the client wants an interactive session in the guest.]]></description>
+</bind>
+<bind name='programPath' type='string' export-name="programPath" ><description><![CDATA[The absolute path to the program to start. For Linux guest operating systems, /bin/bash is used to start the program.  For Solaris guest operating systems, /bin/bash is used to start the program if it exists. Otherwise /bin/sh is used. If /bin/sh is used, then the process ID returned will be that of the shell used to start the program, rather than the program itself, due to the differences in how /bin/sh and /bin/bash work. This PID will still be usable for watching the process with this API to find its exit code and elapsed time. ]]></description>
+</bind>
+<bind name='arguments' type='string' export-name="arguments" ><description><![CDATA[The arguments to the program. In Linux and Solaris guest operating systems, the program will be executed by a guest shell. This allows stdio redirection, but may also require that characters which must be escaped to the shell also be escaped on the command line provided. For Windows guest operating systems, prefixing the command with "cmd /c" can provide stdio redirection. ]]></description>
+</bind>
+<bind name='workingDirectory' type='string' explicitly-not-bound='true' ><description><![CDATA[The absolute path of the working directory for the program to be run. VMware recommends explicitly setting the working directory for the program to be run. If this value is unset or is an empty string, the behavior depends on the guest operating system. For Linux guest operating systems, if this value is unset or is an empty string, the working directory will be the home directory of the user associated with the guest authentication. For other guest operating systems, if this value is unset, the behavior is unspecified. ]]></description>
+</bind>
+<bind name='environment' type='Array/string' explicitly-not-bound='true' ><description><![CDATA[An array of environment variables, specified in the guest OS notation (eg PATH=c:\bin;c:\windows\system32 or LD_LIBRARY_PATH=/usr/lib:/lib), to be set for the program being run. Note that these are not additions to the default environment variables; they define the complete set available to the program. If none are specified the values are guest dependent. ]]></description>
+</bind>
+</in-binding><out-binding><bind name='result' type='number' export-name="result" ><description><![CDATA[The pid of the program started.]]></description>
+</bind>
+</out-binding><description><![CDATA[Starts a program in the guest operating system.
+A process started this way can have its status queried with this API. When the process completes, its exit code and end time will be available for 5 minutes after completion.]]></description>
+<position x='345.0' y='119.04545454545453'/>
+</workflow-item>
+<presentation>
+<p-param name="vCACVm"><desc><![CDATA[vCACVm]]></desc>
+</p-param>
+<p-param name="vCenterVm"><desc><![CDATA[vCenterVm]]></desc>
+</p-param>
+<p-param name="virtualMachineEntity"><desc><![CDATA[virtualMachineEntity]]></desc>
+</p-param>
+<p-param name="vCACHost"><desc><![CDATA[vCACHost]]></desc>
+</p-param>
+<p-param name="externalWFStub"><desc><![CDATA[externalWFStub]]></desc>
+</p-param>
+<p-param name="vCACVmProperties"><desc><![CDATA[vCACVmProperties]]></desc>
+</p-param>
+</presentation></workflow>

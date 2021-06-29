@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="matching" result-type="void" api-version="6.0.0" id="994cdd2c-4bd7-4397-982b-a5b5ee603fc2" version="0.0.0" allowed-operations="vfe" category-name="test.forms">
+  <param n="port" t="number"/>
+  <param n="host" t="string"/>
+  <script encoded="false"><![CDATA[var hostStr = undefined;
+var portStr = undefined;
+
+if (host && host.trim().length >0 ) {
+   hostStr  = host.trim();
+}
+
+if (port && port > 0 ) {
+   port  = port;
+}
+
+if (hostStr && port) {
+  return  "https://" + hostStr +":"+ port + "/pbm";
+}
+return null;]]></script>
+</dunes-script-module>

@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="82aa03ea-d1bf-4a8a-9399-b9f6f9d5036a" version="0.0.4" api-version="6.0.0" allowed-operations="vfe" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Input_Attribute_Test]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="strINput" type="string"/>
+    <param name="numInput" type="number"/>
+    <param name="vcVM" type="VC:VirtualMachine"/>
+  </input>
+  <attrib name="pass" type="SecureString" read-only="false">
+    <value encoded="n"><![CDATA[7BY70J61U73M73U31Z32I33M914D3EAWC83BACFJ6D23D4CS718E74CVBEFAE3UB0EDE15H5D5DCE5JFE20C83RA84F305L38661D7MC951CD4N3FD29F8GCE43AAFOE148CE7UB22F486N2F9CA26K4D91FB7GF797B51L4932138MD6A9D34Z3DB3D59L985D286KB579A5AQ4C647A4GA24CF15S]]></value>
+  </attrib>
+  <attrib name="vcVM_Attribute" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="config_pass" type="SecureString" read-only="false" conf-id="095bf9a1-d9d6-4db9-99ea-f3a7691e5292" conf-key="pass">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="384.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[System.log(pass);
+System.log(config_pass);]]></script>
+    <in-binding>
+      <bind name="strINput" type="string" export-name="strINput"/>
+      <bind name="pass" type="SecureString" export-name="pass"/>
+      <bind name="param1" type="SecureString" export-name="pass"/>
+      <bind name="vcVM_Attribute" type="string" export-name="vcVM_Attribute"/>
+      <bind name="config_pass" type="SecureString" export-name="config_pass"/>
+    </in-binding>
+    <out-binding/>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="strINput">
+      <desc><![CDATA[strINput]]></desc>
+    </p-param>
+    <p-param name="numInput">
+      <desc><![CDATA[numInput]]></desc>
+    </p-param>
+    <p-param name="vcVM">
+      <desc><![CDATA[vcVM]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

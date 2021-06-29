@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="92171940-7d68-4761-bb63-d884209a425c" version="0.0.1" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Clean up content]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="serverFQDN" type="string"/>
+    <param name="port" type="string"/>
+    <param name="user" type="string"/>
+    <param name="pass" type="string"/>
+  </input>
+  <attrib name="resultData" type="ConfigurationElement" read-only="false">
+    <value encoded="n"><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='1c574c1e-6778-40e2-ab35-0de1289c5fa7'&dunesName='ConfigurationElement']]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="384.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[var host =  System.getModule("com.vmware.eso.vro").createRestHost(serverFQDN, port, user, pass);
+var allTasks = getAllTask(host);
+
+for each(var task in allTasks){
+	if(task.rel == "down"){
+		deleteTaskById(host, task.href);
+	}
+}
+
+
+function getAllTask(host){
+	var httpMethod = "GET";
+	var queryString = "/vco/api/tasks/";
+
+	operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Get task", httpMethod, queryString);
+	result =  System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, "");
+
+	return JSON.parse(result).relations.link;
+}
+
+function deleteTaskById(host, queryString){
+	var httpMethod = "DELETE";
+
+	operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Get task", httpMethod, queryString);
+	result =  System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, "");
+
+}]]></script>
+    <in-binding>
+      <bind name="resultData" type="ConfigurationElement" export-name="resultData"/>
+      <bind name="serverFQDN" type="string" export-name="serverFQDN"/>
+      <bind name="port" type="string" export-name="port"/>
+      <bind name="user" type="string" export-name="user"/>
+      <bind name="pass" type="string" export-name="pass"/>
+    </in-binding>
+    <out-binding/>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="serverFQDN">
+      <desc><![CDATA[serverFQDN]]></desc>
+    </p-param>
+    <p-param name="port">
+      <desc><![CDATA[port]]></desc>
+    </p-param>
+    <p-param name="user">
+      <desc><![CDATA[user]]></desc>
+    </p-param>
+    <p-param name="pass">
+      <desc><![CDATA[pass]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

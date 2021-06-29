@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-policy name="untitled policy 39850823" type="0" api-version="6.0.0" id="9c5a6ea7-66f9-474c-a556-477046126ac6" version="0.0.0">
+  <event type="OnInit" kind="trigger" active="false">
+    <workflow id="d4c0eeec-f144-4280-8403-80e808faa270">
+      <in-bindings>
+        <bind name="strInput" type="string"/>
+      </in-bindings>
+    </workflow>
+  </event>
+</dunes-policy>

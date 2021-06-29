@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="e12ac7e9-2a4e-45bf-9573-e73ba71957b7" version="0.0.1" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[LogConfigElementData]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="element" type="ConfigurationElement"/>
+  </input>
+  <attrib name="testData" type="ConfigurationElement" read-only="false">
+    <value encoded="n"><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='1c574c1e-6778-40e2-ab35-0de1289c5fa7'&dunesName='ConfigurationElement']]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="384.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[for each(var attribute in element.attributes){
+	System.log("Attribute : " + attribute.name);
+	
+	
+	for each(var entityData in attribute.value){
+		System.log(JSON.stringify(entityData))
+//		
+	}
+}]]></script>
+    <in-binding>
+      <bind name="element" type="ConfigurationElement" export-name="element"/>
+    </in-binding>
+    <out-binding/>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="element">
+      <desc><![CDATA[element]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

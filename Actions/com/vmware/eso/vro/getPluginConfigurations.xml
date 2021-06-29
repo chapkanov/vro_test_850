@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getPluginConfigurations" result-type="Array/string" api-version="6.0.0" id="0ed56158-a261-4260-b874-1ae3074562ab" version="0.0.0" allowed-operations="evf" category-name="com.vmware.eso.vro">
+  <param n="pluginData" t="ConfigurationElement"/>
+  <param n="pluginName" t="string"/>
+  <script encoded="false"><![CDATA[var pluginConfigurations = pluginData.getAttributeWithKey(pluginName).value;
+var configurationNames = pluginConfigurations.get("configurations").keys;
+var result = new Array();
+for each(var configurationName in configurationNames){
+	result.push(configurationName + ":" + pluginName)
+}
+
+
+return result;]]></script>
+</dunes-script-module>

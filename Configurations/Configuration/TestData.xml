@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config-element id="095bf9a1-d9d6-4db9-99ea-f3a7691e5292" version="0.0.0">
+  <display-name><![CDATA[TestData]]></display-name>
+  <atts>
+    <att name="pass" type="SecureString" read-only="false">
+      <value encoded="n"><![CDATA[__NULL__]]></value>
+    </att>
+  </atts>
+</config-element>

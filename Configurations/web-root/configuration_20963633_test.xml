@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config-element id="cbbe3326-dde2-426e-85ff-883fa06c9dd3" version="0.0.1">
+  <display-name><![CDATA[configuration_20963633_test]]></display-name>
+  <atts>
+    <att name="dateTimeVar" type="Date" read-only="false"/>
+    <att name="var_0" type="VC:VirtualMachine" read-only="false"/>
+    <att name="var_1" type="CompositeType(field:Array/string,field_1:Array/string):CompositeTypeVar" read-only="false">
+      <value encoded="n"><![CDATA[{5:15:field=Array/string#[]
+7:15:field_1=Array/string#[]
+}]]></value>
+    </att>
+  </atts>
+</config-element>

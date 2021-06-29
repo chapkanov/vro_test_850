@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="executeRestOperation" result-type="string" api-version="6.0.0" id="037be1ca-23f2-4859-a5a0-68b30e118ac6" version="0.0.0" allowed-operations="evf" category-name="com.vmware.eso.vro">
+  <param n="operation" t="REST:RESTOperation"/>
+  <param n="parameters" t="string"/>
+  <param n="postContent" t="string"/>
+  <param n="token" t="string"/>
+  <script encoded="false"><![CDATA[var attempts = [];
+var retryTriggered = false;
+var responseObj = {};
+var success = false;
+var retryOnError = true;
+var retryInterval = 5000; //milliseconds
+var retryCount = 12;
+var timesTried = 0
+
+parameters = parameters ? parameters: [];
+
+do{
+	timesTried++
+	try{
+		var request = operation.createRequest(parameters, postContent);
+        System.debug("Request method: " + request.method);
+		System.debug("Request URL: "+request.fullUrl);
+		var response;
+
+		if(token){
+			System.debug("Setting Bearer Token in header");
+			request.setHeader("Authorization","Bearer " + token);
+            response = request.execute()
+		}else{
+            var host = operation.host;
+            var user = host.authentication.username;
+            var pass = host.authentication.password;
+
+            if(user && pass){
+                response = request.executeWithCredentials(user, pass);
+            }else{
+                response = request.execute();
+            }
+            
+        }
+	    		
+		var statusCode = response.statusCode;
+		var contentLength = response.contentLength;
+		var headers = response.getAllHeaders();
+
+		if ( statusCode >= 400 ) {
+	    	throw statusCode;	
+		}
+		System.debug("Rest response response.contentAsString: " + response.contentAsString)
+		var contentAsString = response.contentAsString.trim();
+
+		if(contentAsString && contentAsString.length > 0){
+			var responseObj = JSON.parse(contentAsString);
+			success = true
+			return contentAsString;
+		}else{
+			return "";
+		}
+		
+	} catch(ex) {
+		success = false
+		var contentAsString = "";
+		
+		if(response){
+			var contentAsString = response.contentAsString;
+		}
+		
+		var error = ex + ", Error Details: " + contentAsString;
+		
+        if(statusCode){
+			error = "HTTP Error: status code: " + statusCode + "," + ex + ", Error Details: " + contentAsString;
+			System.debug("HTTP Error: status code: " + statusCode + ", " + ex + ", Error Details: " + contentAsString);
+		} else {
+			System.error(ex + ", Error Details: " + contentAsString);
+		}
+
+		if(retryOnError){
+			retryTriggered = _evaluateRetry(timesTried, retryCount, retryInterval);
+		}
+		
+	} finally {
+		
+		var attempt = {};
+		attempt.error = error;
+		attempts.push(attempt);
+	
+	}
+	
+}while(retryTriggered);
+
+throw "API request failed. " + "\n" + "Last Error: " + attempts[attempts.length - 1].error + "\n" + "Retry Attempts: " + (attempts.length - 1)
+
+function _evaluateRetry(_timesTried, _maxRetries, _retryInterval){
+    var result = _timesTried <= _maxRetries
+	if(result){
+		// do sleep
+		System.log("Retrying.. Attempt # " + _timesTried + " of " + _maxRetries);
+		System.sleep(_retryInterval);
+	}
+    return result;
+}]]></script>
+</dunes-script-module>

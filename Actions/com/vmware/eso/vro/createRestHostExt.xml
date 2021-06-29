@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="createRestHostExt" result-type="REST:RESTHost" api-version="6.0.0" id="12c85057-e6ce-451c-8a9d-639665bc490e" version="0.0.0" allowed-operations="evf" category-name="com.vmware.eso.vro">
+  <param n="protocol" t="string"/>
+  <param n="hostFQDN" t="string"/>
+  <param n="port" t="string"/>
+  <param n="username" t="string"/>
+  <param n="password" t="string"/>
+  <param n="token" t="string"/>
+  <script encoded="false"><![CDATA[var baseUrl = (protocol == null) ? "https://" + hostFQDN : protocol + "://" + hostFQDN;
+if(port){
+	baseUrl = baseUrl + ":" + port;
+}
+System.debug("BASE URL " + baseUrl)
+var authType = (token != null  && token.length > 0)? "OAuth 2.0" : "Basic";
+var authData = {
+	"type" : authType,
+	"user" : username,
+	"password" : password,
+	"token"	: token
+}
+
+System.log("Auth data " + JSON.stringify(authData));
+
+
+
+var restHost = getRestHost(baseUrl, authData);
+
+if (restHost == null){
+    System.debug("Create a rest host")
+	restHost = createRestHost(baseUrl, authData);
+}else{
+	System.debug("Found existing rest host for " + baseUrl) ;
+}
+
+if(restHost == null){
+	throw("Host is null")
+}
+
+return restHost;
+
+//--------------------------------------------------------------
+
+function getRestHost(baseURL, authData){
+	var allHosts = Server.findAllForType("REST:RESTHost");
+	var targetHost = null;
+	
+	for each(var host in allHosts){
+        var hostURL = host.url;
+        var auth = host.authentication;
+		
+        if(host.url.indexOf(baseURL)!=-1  && authData.type == auth.type){
+			System.log(authType)
+			System.log(auth.rawAuthProperties[1])
+			if( (authType == "Basic" && auth.rawAuthProperties[1] == authData.user) || (authType == "OAuth 2.0")){
+				targetHost = host;
+				break;
+			}
+        }
+	}
+	return targetHost;
+}
+
+function createRestHost(baseURL, authData) {
+    var retries = 3;
+    var currentRetryNumber = 1;
+    var tokenState = null;
+
+    System.debug("Create Rest host for " + baseURL)
+    var id = "8F8080808080808080808080808080808080808001299080088268176866967b3"
+    var createRestHostWF = Server.getWorkflowWithId(id);
+
+    var inParamProperties = new Properties();
+	var hostName;
+	if(authData.type == "Basic"){
+		 hostName = baseURL + "@" + authData.user;
+	}else if(authData.type == "OAuth 2.0"){
+		hostName = baseURL + "@Bearer";
+	}else{
+		hostName = baseURL + "@None";
+	}
+
+
+    inParamProperties.put("name", hostName);
+    inParamProperties.put("url", baseURL);
+    if (authData.type == "OAuth 2.0") {
+        inParamProperties.put("authentication", "OAuth 2.0");
+        inParamProperties.put("oauth2Token", token);
+    } else if (authData.type == "Basic" && (authData.user && authData.user.length > 0) && (authData.password && authData.password.length > 0)) {
+        inParamProperties.put("authentication", "Basic");
+        inParamProperties.put("sessionMode", "Shared Session");
+        inParamProperties.put("authUserName", authData.user);
+        inParamProperties.put("authPassword", authData.password);
+    } else {
+        inParamProperties.put("authentication", "NONE");
+    }
+
+
+    inParamProperties.put("autoUrlRedirection", false);
+    inParamProperties.put("connectionTimeout", 600);
+    inParamProperties.put("operationTimeout", 600);
+    inParamProperties.put("hostVerification", false);
+    inParamProperties.put("ignoreWarnings", true);
+
+    var wfToken = null;
+    do {
+        if (currentRetryNumber > 1) {
+            System.debug("Retry to create a rest host for " + (currentRetryNumber) + " time");
+        }
+        currentRetryNumber++;
+        wfToken = createRestHostWF.execute(inParamProperties);
+        waitForExecutionToFinish(wfToken, 1000, 5 * 60 * 1000);
+        tokenState = wfToken.state;
+
+        if (tokenState == 'failed' && currentRetryNumber <= retries) {
+            System.sleep(30000);
+        }
+
+    } while (tokenState == null || (tokenState == 'failed' && currentRetryNumber <= retries));
+
+    if (tokenState == 'failed') {
+        throw ("Error while creating a rest host " + wfToken.exception);
+    }
+
+    var outputs = wfToken.getOutputParameters();
+
+    return outputs.get("restHost");
+}
+
+function waitForExecutionToFinish(wfToken, poolInterval, timeOut) {
+    var tokenState = wfToken.state;
+    var currentDuration = poolInterval;
+
+
+    while (tokenState == "running" || tokenState == "waiting" || tokenState == "waiting-signal") {
+        System.sleep(poolInterval);
+        currentDuration = currentDuration + poolInterval;
+
+        if (currentDuration >= timeOut) {
+            throw ("Workflow execution did not finish for " + timeOut);
+        }
+
+        tokenState = wfToken.state;
+        System.debug("Workflow " + wfToken.currentWorkflow.name + " | State " + tokenState);
+    }
+    System.debug("Workflow " + wfToken.currentWorkflow.name + " finished with state " + tokenState);
+
+    if (wfToken.state == 'failed') {
+        System.debug("Error " + wfToken.exception);
+    }
+}]]></script>
+</dunes-script-module>

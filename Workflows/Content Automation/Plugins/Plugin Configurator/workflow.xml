@@ -1,0 +1,272 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item2" object-name="workflow:name=generic" id="46455dbb-985b-4656-91b9-9a63e87b9181" version="0.0.12" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Plugin Configurator]]></display-name>
+  <error-handler name="item5" throw-bind-name="errorCode">
+    <position y="181.77272727272725" x="385.0"/>
+  </error-handler>
+  <position y="72.68181818181817" x="125.0"/>
+  <input>
+    <param name="serverFQDN" type="string"/>
+    <param name="serverPort" type="string"/>
+    <param name="user" type="string"/>
+    <param name="pass" type="string"/>
+    <param name="pluginName" type="string"/>
+    <param name="pluginConfigurationNames" type="Array/string"/>
+  </input>
+  <attrib name="errorCode" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="pluginsConfigurations" type="Array/Properties" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="pluginConfigWorkflowId" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="url" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[URL or just host:port for non-HTTPS SSL services:]]></description>
+  </attrib>
+  <attrib name="ignoreWarnings" type="boolean" read-only="false">
+    <value encoded="n"><![CDATA[true]]></value>
+    <description><![CDATA[If set to true, the certificate is accepted silently and the certificate is added to the trusted store]]></description>
+  </attrib>
+  <attrib name="executionData" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="actionResult" type="string" read-only="false">
+    <value encoded="n"><![CDATA[workflowExecResult]]></value>
+  </attrib>
+  <attrib name="allPluginData" type="ConfigurationElement" read-only="false">
+    <value encoded="n"><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='290ff911-f4fb-46ee-af55-92babdf0e54f'&dunesName='ConfigurationElement']]></value>
+  </attrib>
+  <attrib name="currentPluginConfiguration" type="Properties" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="waitToComplete" type="boolean" read-only="false">
+    <value encoded="n"><![CDATA[true]]></value>
+  </attrib>
+  <workflow-item name="item0" out-name="item10" type="custom-condition" alt-out-name="item5">
+    <display-name><![CDATA[Has next plugin configuration]]></display-name>
+    <script encoded="false"><![CDATA[return pluginsConfigurations.length > 0]]></script>
+    <in-binding>
+      <bind name="pluginsConfigurations" type="Array/Properties" export-name="pluginsConfigurations"/>
+    </in-binding>
+    <position y="72.68181818181817" x="544.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item6" throw-bind-name="errorCode" type="task">
+    <display-name><![CDATA[Generate setup execution data]]></display-name>
+    <script encoded="false"><![CDATA[var inputData = currentPluginConfiguration.get("configuration");
+pluginConfigWorkflowId = currentPluginConfiguration.get("configWorkflowId");
+
+var paramArray = new Array();
+
+for each(var paramKey in inputData.keys){
+    var paramName = paramKey;
+    var paramComplexValue = inputData.get(paramKey);
+    var paramType = paramComplexValue.type
+    var paramValue = paramComplexValue.value;
+    var valueProps = new Properties();
+
+	if(paramValue == null) continue;
+	
+    if(paramType.indexOf("Array")!=-1)	{
+        if(paramValue.length == 0){
+            paramValue = [];
+        }else{
+            paramValue = JSON.stringify(paramValue);
+        }
+        var entityType = paramType.replace("Array/", "");
+        var arrayData = (paramValue.length == 0)? [] :  getArrayValue(entityType, new Array(paramValue)); //JSON.parse(new Array(paramValue)); 
+        
+        valueProps.put( "array", { "elements": arrayData})
+    }else{
+        type = (paramType == "SecureString")? "string" : paramType;
+        valueProps.put(type, { "value": paramValue })
+    }
+
+    
+    paramArray.push({
+                        "name": paramName,
+                        "type": paramType,
+                        "value": valueProps
+	                });
+} 
+
+var executionData = new Properties();
+executionData.put("parameters", paramArray)
+executionData = JSON.stringify(executionData)
+
+
+System.log("workflowId " + pluginConfigWorkflowId)
+System.log("Execution Data: " + executionData)
+
+function getArrayValue(entityType, valueArray){
+	var result = new Array();
+
+	for each(var arElement in valueArray){
+		var el = new Properties();
+		el.put(entityType, {"value": arElement});
+		result.push(el);
+	}
+	System.log("result " + JSON.stringify(result))
+	return result;
+}
+]]></script>
+    <in-binding>
+      <bind name="currentPluginConfiguration" type="Properties" export-name="currentPluginConfiguration"/>
+    </in-binding>
+    <out-binding>
+      <bind name="executionData" type="string" export-name="executionData"/>
+      <bind name="pluginConfigWorkflowId" type="string" export-name="pluginConfigWorkflowId"/>
+    </out-binding>
+    <position y="82.68181818181817" x="1064.5"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item4" type="task">
+    <display-name><![CDATA[Get plugin configurations]]></display-name>
+    <script encoded="false"><![CDATA[pluginsToConfigure = new Array();
+pluginsConfigurations = new Array()
+for each(var pluginConfigName in pluginConfigurationNames){
+
+	var configurationName = pluginConfigName.split(":")[0]
+	var pluginName = pluginConfigName.split(":")[1]
+	var configData = new Properties();
+	configData.put("configWorkflowId", getPluginConfigWorkflowId(pluginName))
+	configData.put("configuration", getConfiguration(pluginName, configurationName));
+	configData.put("name", configurationName);
+	configData.put("plugin", pluginName);
+	
+	if(pluginsToConfigure.indexOf(pluginName)== -1){
+		pluginsToConfigure.push(pluginName);
+	}
+	pluginsConfigurations.push(configData);
+}
+System.log("*****************************************")
+System.log("Plugns to configure: ")
+for each(var pluginName in pluginsToConfigure){
+	System.log("\t" + pluginName)
+}
+System.log("*****************************************\n")
+
+function getConfiguration(pluginName, configName){
+	var allPluginConfigs = allPluginData.getAttributeWithKey(pluginName).value.get("configurations");
+	return allPluginConfigs.get(configName);
+}
+
+function getPluginConfigWorkflowId(pluginName){
+	return allPluginData.getAttributeWithKey(pluginName).value.get("configWorkflowId");
+}]]></script>
+    <in-binding>
+      <bind name="allPluginData" type="ConfigurationElement" export-name="allPluginData"/>
+      <bind name="pluginConfigurationNames" type="Array/string" export-name="pluginConfigurationNames"/>
+      <bind name="pluginsConfigurations" type="Array/Properties" export-name="pluginsConfigurations"/>
+      <bind name="serverPort" type="string" export-name="serverPort"/>
+    </in-binding>
+    <out-binding>
+      <bind name="pluginsConfigurations" type="Array/Properties" export-name="pluginsConfigurations"/>
+      <bind name="url" type="string" export-name="url"/>
+    </out-binding>
+    <position y="82.68181818181817" x="224.5"/>
+  </workflow-item>
+  <workflow-item name="item5" out-name="item7" catch-name="item8" throw-bind-name="errorCode" type="task">
+    <display-name><![CDATA[Clean up]]></display-name>
+    <script encoded="false"><![CDATA[var allHosts = Server.findAllForType("REST:RESTHost");
+
+for each(var host in allHosts){
+    if(host.url.indexOf(serverFQDN)!= -1){
+        System.debug("Remove rest host for " + serverFQDN);
+        System.getModule("com.vmware.library.http-rest.configuration").removeRESTHost(host.id);
+    }
+}
+
+if(errorCode){
+    throw errorCode;
+}]]></script>
+    <in-binding>
+      <bind name="errorCode" type="string" export-name="errorCode"/>
+      <bind name="serverFQDN" type="string" export-name="serverFQDN"/>
+    </in-binding>
+    <out-binding/>
+    <position y="191.77272727272725" x="544.5"/>
+  </workflow-item>
+  <workflow-item name="item7" type="end" end-mode="0">
+    <position y="181.77272727272725" x="724.5"/>
+  </workflow-item>
+  <workflow-item name="item8" throw-bind-name="errorCode" type="end" end-mode="1">
+    <position y="245.40909090909088" x="584.5"/>
+  </workflow-item>
+  <workflow-item name="item10" out-name="item1" type="task">
+    <display-name><![CDATA[Get plugin configurations]]></display-name>
+    <script encoded="false"><![CDATA[currentPluginConfiguration = pluginsConfigurations.pop();
+System.log("*** Setup " + currentPluginConfiguration.get("plugin") + " plugin / Configuration: "+currentPluginConfiguration.get("name")+" ***")
+
+]]></script>
+    <in-binding>
+      <bind name="pluginsConfigurations" type="Array/Properties" export-name="pluginsConfigurations"/>
+    </in-binding>
+    <out-binding>
+      <bind name="currentPluginConfiguration" type="Properties" export-name="currentPluginConfiguration"/>
+      <bind name="pluginsConfigurations" type="Array/Properties" export-name="pluginsConfigurations"/>
+    </out-binding>
+    <position y="82.68181818181817" x="784.5"/>
+  </workflow-item>
+  <workflow-item name="item4" out-name="item0" type="link" linked-workflow-id="c5a874a2-e8e7-480d-bdde-d1a80b8a3011">
+    <display-name><![CDATA[Import a certificate from URL]]></display-name>
+    <in-binding>
+      <bind name="url" type="string" export-name="url">
+        <description><![CDATA[URL or just host:port for non-HTTPS SSL services:]]></description>
+      </bind>
+      <bind name="ignoreWarnings" type="boolean" export-name="ignoreWarnings">
+        <description><![CDATA[If set to true, the certificate is accepted silently and the certificate is added to the trusted store]]></description>
+      </bind>
+    </in-binding>
+    <out-binding/>
+    <description><![CDATA[Imports an SSL certificate into the server trust store.]]></description>
+    <position y="82.68181818181817" x="404.5"/>
+  </workflow-item>
+  <workflow-item name="item6" out-name="item0" throw-bind-name="errorCode" type="task" script-module="com.vmware.eso.vro/executeVroServerWorkflow">
+    <display-name><![CDATA[executeVroServerWorkflow]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.vmware.eso.vro").executeVroServerWorkflow(serverFQDN,port,user,pass,workflowId,executionData,waitToComplete) ;]]></script>
+    <in-binding>
+      <bind name="executionData" type="string" export-name="executionData">
+        <description><![CDATA[Execution data (JSON format)]]></description>
+      </bind>
+      <bind name="pass" type="string" export-name="pass"/>
+      <bind name="port" type="string" export-name="serverPort"/>
+      <bind name="serverFQDN" type="string" export-name="serverFQDN"/>
+      <bind name="user" type="string" export-name="user"/>
+      <bind name="waitToComplete" type="boolean" export-name="waitToComplete"/>
+      <bind name="workflowId" type="string" export-name="pluginConfigWorkflowId"/>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="string" export-name="actionResult"/>
+    </out-binding>
+    <description><![CDATA[POST /api/workflows/{workflowId}/executions
+
+]]></description>
+    <position y="155.4090909090909" x="784.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="pluginName">
+      <desc><![CDATA[pluginName]]></desc>
+      <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#AD#;#string#POWERSHELL#;#string#VRA_IAAS#;#string#VRA#;#string#VAPI#;#string#SOAP#;#string#SSH#;#string#MULTINODE#;#string#VSPHERE#;#string#REST#;#string#SQL#}#]]></p-qual>
+    </p-param>
+    <p-param name="pluginConfigurationNames">
+      <desc><![CDATA[pluginConfigurationNames]]></desc>
+      <p-qual kind="ognl" name="genericEnumeration" type="Array/string"><![CDATA[GetAction("com.vmware.eso.vro","getPluginConfigurations").call( #allPluginData , #pluginName )]]></p-qual>
+      <p-qual kind="static" name="sameValues" type="boolean"><![CDATA[false]]></p-qual>
+    </p-param>
+    <p-param name="serverFQDN">
+      <desc><![CDATA[serverFQDN]]></desc>
+    </p-param>
+    <p-param name="serverPort">
+      <desc><![CDATA[serverPort]]></desc>
+    </p-param>
+    <p-param name="user">
+      <desc><![CDATA[user]]></desc>
+    </p-param>
+    <p-param name="pass">
+      <desc><![CDATA[pass]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

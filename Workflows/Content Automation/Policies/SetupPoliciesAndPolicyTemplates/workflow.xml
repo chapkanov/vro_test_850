@@ -1,0 +1,364 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="6b999e06-7cde-4849-bc47-83985d740ddd" version="0.0.31" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[SetupPoliciesAndPolicyTemplates]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="customize" type="boolean"/>
+    <param name="policyNames" type="Array/string"/>
+    <param name="pass" type="string"/>
+    <param name="user" type="string"/>
+    <param name="serverFQDN" type="string"/>
+    <param name="port" type="string"/>
+    <param name="triggerPolicy" type="boolean"/>
+    <param name="policyConfigurationData" type="Array/Properties"/>
+    <param name="policyTemplateConfigData" type="Array/Properties"/>
+    <param name="setupPolicyTemplates" type="boolean"/>
+    <param name="setupPolicies" type="boolean"/>
+  </input>
+  <output>
+    <param name="policyTemplates" type="Array/Properties"/>
+    <param name="policies" type="Array/Properties"/>
+  </output>
+  <attrib name="policyData" type="ConfigurationElement" read-only="false">
+    <value encoded="n"><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='ee159d56-0ac6-48aa-9bac-32ba392818ed'&dunesName='ConfigurationElement']]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="384.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[policyTemplates = new Array();
+policies = new Array();
+
+var host =  System.getModule("com.vmware.eso.vro").createRestHost(serverFQDN, port, user, pass);
+var allPolicyTemplates = getAllPolicyTemplates(host);
+var allPolicies = getAllPolicies(host);
+if(setupPolicyTemplates){
+	var configPolicyEntitiesData = (policyTemplateConfigData != null) ? policyTemplateConfigData : getPolicyEntitiesFromConfiguration(policyData, policyNames);
+	
+	for each(var configPolicyEntityData in configPolicyEntitiesData){
+		
+		System.log("*****************************************************************");
+		System.log("Setup policy template")// Handle policy templates
+		System.log("*****************************************************************");
+	
+		System.log("** Create policy template with name [" + configPolicyEntityData.name + "]");
+		var result = getPolicyTemplateByName(host, configPolicyEntityData.name, allPolicyTemplates);
+		if( result != null ){
+			System.log("\t Policy template with name [" + configPolicyEntityData.name + "] already exists");
+		}else{
+			id = createPolicyTemplateAPI(host);
+			policyTemplateEntityData = updatePolicyTemplate(host, id, configPolicyEntityData);
+			delete policyTemplateEntityData.href;
+			delete policyTemplateEntityData.relations;
+			delete policyTemplateEntityData.version;
+			delete policyTemplateEntityData.id;
+			policyTemplates.push(policyTemplateEntityData);
+		}
+	}
+}
+
+if(setupPolicies){
+	var configPolicyEntitiesData = (policyConfigurationData != null) ? policyConfigurationData : getPolicyEntitiesFromConfiguration(policyData, policyNames);
+	
+	for each(var configPolicyEntityData in configPolicyEntitiesData){
+	
+		System.log("*****************************************************************");
+		System.log("Setup policy")// Handle Policies
+		System.log("*****************************************************************");
+		var policyProps = new Properties();
+	
+		System.log("** Create policy with name [" + configPolicyEntityData.name + "]");
+		var result = getPolicyByName(host, configPolicyEntityData.name, allPolicies);
+		if( result != null ){
+			System.log("\t Policy with name [" + configPolicyEntityData.name + "] already exists");
+			policyID = result.id;
+			policyProps.put(policyID, null);
+		}else{
+			delete configPolicyEntityData.href;
+			delete configPolicyEntityData.relations;
+			delete configPolicyEntityData.version;
+			delete configPolicyEntityData.id;
+			policyEntityData = createPolicyAPI(host, configPolicyEntityData);
+			policyID = policyEntityData.id;
+			System.sleep(5000);
+		}
+	
+		System.log("*****************************************************************");
+		System.log("Trigger policies")
+		System.log("*****************************************************************");
+		
+		if(triggerPolicy){
+			System.log("** Start policy with name [" +  configPolicyEntityData.name + "]");
+			var policyProps = getPolicyByID(host, policyID);
+	
+			if(policyProps){
+				if( policyProps.state != "started"){
+					startPolicy(host, policyID);
+				}else{
+					System.log("Policy " + configPolicyEntityData.name + " already started")
+				}
+			}else{
+				System.warn("\t Policy with name [" +  configPolicyEntityData.name + "] does not exists");
+			}	
+		}
+		policies.push(policyProps);
+	}
+}
+
+
+function getAllPolicies(host){
+	System.log("\tGet all policies");
+	var httpMethod = "GET";
+	var queryStringBase = "/vco/api/policies"
+	
+	
+	var operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Get policy template", httpMethod, queryStringBase);
+	var result = System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, "");
+	result = JSON.parse(result);
+	
+	return result.relations.link;
+}
+
+
+function getPolicyByName(host, name, allPolicies){
+	System.log("\tGet policy by name : " + name);
+	var httpMethod = "GET";
+	
+	for each(var policyEntity in allPolicies){
+		var attributes = policyEntity.attributes;
+
+		for each(var attribute in attributes){
+			if(attribute.name = "name" && attribute.value == name){
+				var queryString = policyEntity.href.split(port).pop();
+				operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Get policy", httpMethod, queryString);
+				result =  System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, "");
+
+				return JSON.parse(result);
+			}
+		}
+	}
+	return null;
+}
+
+function getPolicyByID(host, policyID){
+	System.log("\Get policy with id : " + policyID);
+	var httpMethod = "GET";
+	var queryString = "/vco/api/policies/"+ policyID;
+	
+	var operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Get policy", httpMethod, queryString);
+	var result = System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, JSON.stringify("started"));
+	
+	return JSON.parse(result);
+}
+
+function startPolicy(host, policyID){
+	System.log("\tStart policy with id : " + policyID);
+	var httpMethod = "PUT";
+	var queryString = "/vco/api/policies/"+ policyID + "/state";
+	
+	var operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Start policy", httpMethod, queryString);
+	var result = System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, JSON.stringify("started"));
+}
+
+function createPolicyAPI(host, policyRqData){
+	System.log("\tCreate policy with name : " + policyRqData.name);
+	System.log(JSON.stringify(policyRqData))
+	var httpMethod = "POST";
+	var queryString = "/vco/api/policies/"
+	
+	var operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Create policy", httpMethod, queryString);
+	var result = System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, JSON.stringify(policyRqData));
+	
+	if(result && result.length > 0){
+	   result = JSON.parse(result);
+	    error = result.error;
+	
+	    if(error && error.length>0){
+	        throw("Error triggering workflow: " + error);
+	    }
+	}
+	return result;
+}
+
+function updatePolicy(host, id, executionData){
+	System.log("\tUpdate policy with id: " + id);
+	var httpMethod = "PUT";
+	var queryString = "/vco/api/policies/" + id;
+			
+	var operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Update policy template", httpMethod, queryString);
+	var result = System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, executionData);
+
+	if(result && result.length > 0){
+	   result = JSON.parse(result);
+	    error = result.error;
+	
+	    if(error && error.length>0){
+	        throw("Error triggering workflow: " + error);
+	    }
+	}
+	
+	return executionData;
+}
+
+function getAllPolicyTemplates(host){
+	System.log("\tGet all policy templates")
+	var httpMethod = "GET";
+	var queryStringBase = "/vco/api/policies/templates"
+	
+	
+	var operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Get policy template", httpMethod, queryStringBase);
+	var result = System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, "");
+	result = JSON.parse(result);
+	
+	return result.link;
+}
+
+function getPolicyTemplateByName(host, name, appTemplates){
+	System.log("\tGet policy template by name : " + name);
+	
+	var httpMethod = "GET";
+	
+	for each(var template in appTemplates){
+		var attributes = template.attributes;
+
+		for each(var attribute in attributes){
+			if(attribute.name == "name" && attribute.value == name){
+				var queryString = template.href.split(port).pop();
+				operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Get policy template", httpMethod, queryString);
+				result =  System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, "");
+
+				return JSON.parse(result);
+			}
+		}
+	}
+	return null;
+}
+
+function createPolicyTemplateAPI(host){
+	System.log("\tCreate base policy template");
+	var httpMethod = "POST";
+	var queryString = "/vco/api/policies/templates"
+	
+	var operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Create policy template", httpMethod, queryString);
+	var result = System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, "");
+	
+	if(result && result.length > 0){
+	   result = JSON.parse(result);
+	    error = result.error;
+	
+	    if(error && error.length>0){
+	        throw("Error triggering workflow: " + error);
+	    }
+	}
+	return result.id;
+}
+
+function updatePolicyTemplate(host, id, executionData){
+	System.log("\tUpdate policy template with id: " + id);
+	var httpMethod = "PUT";
+	var queryString = "/vco/api/policies/templates/" + id;
+			
+	var operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Update policy template", httpMethod, queryString);
+	var result = System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, JSON.stringify(executionData));
+	System.log(result)
+	if(result && result.length > 0){
+	   result = JSON.parse(result);
+	    error = result.error;
+	
+	    if(error && error.length>0){
+	        throw("Error triggering workflow: " + error);
+	    }
+	}
+	
+	return executionData;
+}
+
+function getPolicyEntitiesFromConfiguration(configElement, customEntityNames){
+	var attributes = configElement.attributes;
+	var entityConfigData = new Array();
+	var isCustom = customEntityNames && customEntityNames.length >0
+	
+	for each(attribute in attributes){
+		if(isCustom){
+			if(customEntityNames.indexOf(attribute.name)!=-1){
+				entityConfigData.push(attribute.value);
+			}
+		}else{
+			entityConfigData.push(attribute.value);
+		}	
+	}
+	
+	return entityConfigData;	
+}
+
+
+
+
+function getPolicyEntitieNamesFromConfiguration(configElement){
+	var attributes = configElement.attributes;
+	var entityNames = new Array();
+
+	for each(attribute in attributes){
+		entityNames.push(attribute.name);
+	}
+	return entityNames;	
+}]]></script>
+    <in-binding>
+      <bind name="policyData" type="ConfigurationElement" export-name="policyData"/>
+      <bind name="pass" type="string" export-name="pass"/>
+      <bind name="user" type="string" export-name="user"/>
+      <bind name="serverFQDN" type="string" export-name="serverFQDN"/>
+      <bind name="port" type="string" export-name="port"/>
+      <bind name="policyNames" type="Array/string" export-name="policyNames"/>
+      <bind name="triggerPolicy" type="boolean" export-name="triggerPolicy"/>
+      <bind name="policyConfigurationData" type="Array/Properties" export-name="policyConfigurationData"/>
+      <bind name="policyTemplateConfigData" type="Array/Properties" export-name="policyTemplateConfigData"/>
+      <bind name="setupPolicyTemplates" type="boolean" export-name="setupPolicyTemplates"/>
+      <bind name="setupPolicies" type="boolean" export-name="setupPolicies"/>
+    </in-binding>
+    <out-binding>
+      <bind name="policies" type="Array/Properties" export-name="policies"/>
+      <bind name="policyTemplates" type="Array/Properties" export-name="policyTemplates"/>
+    </out-binding>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="customize">
+      <desc><![CDATA[Customize entities to create. If false all cofiguration entities will be created]]></desc>
+    </p-param>
+    <p-param name="policyNames">
+      <desc><![CDATA[Entity names]]></desc>
+      <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[!#customize]]></p-qual>
+      <p-qual kind="ognl" name="genericEnumeration" type="Array/string"><![CDATA[GetAction("com.vmware.eso.vro","getConfigurationElementAttributeNames").call( #policyData )]]></p-qual>
+      <p-qual kind="static" name="sameValues" type="boolean"><![CDATA[false]]></p-qual>
+    </p-param>
+    <p-param name="triggerPolicy">
+      <desc><![CDATA[Trigger Policy]]></desc>
+    </p-param>
+    <p-param name="serverFQDN">
+      <desc><![CDATA[serverFQDN]]></desc>
+    </p-param>
+    <p-param name="port">
+      <desc><![CDATA[port]]></desc>
+    </p-param>
+    <p-param name="user">
+      <desc><![CDATA[user]]></desc>
+    </p-param>
+    <p-param name="pass">
+      <desc><![CDATA[pass]]></desc>
+    </p-param>
+    <p-param name="policyConfigurationData">
+      <desc><![CDATA[policyConfigurationData]]></desc>
+    </p-param>
+    <p-param name="policyTemplateConfigData">
+      <desc><![CDATA[policyTemplateConfigData]]></desc>
+    </p-param>
+    <p-param name="setupPolicyTemplates">
+      <desc><![CDATA[setupPolicyTemplates]]></desc>
+    </p-param>
+    <p-param name="setupPolicies">
+      <desc><![CDATA[setupPolicies]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

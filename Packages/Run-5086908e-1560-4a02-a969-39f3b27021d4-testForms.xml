@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<description><![CDATA[Export run 5086908e-1560-4a02-a969-39f3b27021d4 for workflow 'test forms' at 8/29/2020, 11:34:30 AM.]]></description>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/WorkflowToken?id='5086908e-1560-4a02-a969-39f3b27021d4'&dunesName='WorkflowToken']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='a185b1a2-5c0d-4f9c-a53f-1487610fd8a0'&dunesName='Workflow']]></elm>
+</package>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<description><![CDATA[Export run 8a95290c-41bd-4c13-88f5-67574ffa2b54 for workflow 'autocompleted fields' at 8/29/2020, 11:32:59 AM.]]></description>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/WorkflowToken?id='8a95290c-41bd-4c13-88f5-67574ffa2b54'&dunesName='WorkflowToken']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='c8631e5a-5db0-4852-91d7-b98459f0a842'&dunesName='Workflow']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='293ba010-8bcf-49ba-93b0-f55660825ab3'&dunesName='Action'&name='autoCompleted'&category='forms']]></elm>
+</package>

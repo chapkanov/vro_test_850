@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item0" object-name="workflow:name=generic" id="1d445d50-f0b3-4d40-9570-1fd99f85ebb0" version="0.0.0" api-version="6.0.0" allowed-operations="vfe" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Hide params]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="bool" type="boolean"/>
+    <param name="str" type="string"/>
+    <param name="numb" type="number"/>
+    <param name="date" type="Date"/>
+    <param name="securestring" type="SecureString"/>
+    <param name="vcvirtualMachine" type="VC:VirtualMachine"/>
+    <param name="vmFolder" type="VC:Folder"/>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="50.0" x="240.0"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="bool">
+      <desc><![CDATA[bool]]></desc>
+    </p-param>
+    <p-param name="str">
+      <desc><![CDATA[str]]></desc>
+      <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#bool]]></p-qual>
+    </p-param>
+    <p-param name="numb">
+      <desc><![CDATA[numb]]></desc>
+      <p-qual kind="static" name="genericEnumeration" type="Array/number"><![CDATA[#{#number#1.0#;#number#2.0#;#number#3.0#;#number#4.0#;#number#5.0#}#]]></p-qual>
+      <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#bool]]></p-qual>
+    </p-param>
+    <p-param name="date">
+      <desc><![CDATA[date]]></desc>
+      <p-qual kind="static" name="mandatory" type="boolean"><![CDATA[true]]></p-qual>
+      <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#bool]]></p-qual>
+    </p-param>
+    <p-param name="securestring">
+      <desc><![CDATA[securestring]]></desc>
+      <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#bool]]></p-qual>
+      <p-qual kind="ognl" name="maxStringLength" type="Number"><![CDATA[10]]></p-qual>
+    </p-param>
+    <p-param name="vcvirtualMachine">
+      <desc><![CDATA[vcvirtualMachine]]></desc>
+      <p-qual kind="static" name="show-select-as" type="string"><![CDATA[tree]]></p-qual>
+      <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#bool]]></p-qual>
+    </p-param>
+    <p-param name="vmFolder">
+      <desc><![CDATA[vmFolder]]></desc>
+      <p-qual kind="static" name="show-select-as" type="string"><![CDATA[drop-down]]></p-qual>
+      <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#bool]]></p-qual>
+    </p-param>
+  </presentation>
+</workflow>

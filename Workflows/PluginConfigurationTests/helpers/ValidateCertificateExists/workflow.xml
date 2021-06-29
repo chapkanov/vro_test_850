@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="7c7d4d58-89e1-469f-8024-60a3c885e40c"  version="0.0.0" api-version="3.1.0" allowed-operations="vef" restartMode="1" resumeFromFailedMode="0" >
+<display-name><![CDATA[ValidateCertificateExists]]></display-name>
+<position x='100.0' y='50.0'/>
+<input><param name='issuerCn' type='string' >
+</param>
+</input><workflow-item name='item0' type='end' end-mode='0' >
+<position x='384.5' y='45.40909090909091'/>
+</workflow-item>
+<workflow-item name='item1' out-name='item0' type='task' >
+<display-name><![CDATA[Get Certificate]]></display-name>
+<script encoded='false'><![CDATA[var certificates = Server.findAllForType("Configurator:CA");
+var i;
+var found = false;
+for(i=0; i<certificates.length && !found; i++){
+	if(certificates[i].issuerCn == issuerCn ||
+	   certificates[i].issuerO == issuerCn){
+		found = true;
+	}
+}
+
+if(found) {
+	System.log("Certificate has been found.")
+} else {
+    throw "The certificate is not found";
+}]]></script>
+<in-binding><bind name='issuerCn' type='string' export-name="issuerCn" ></bind>
+</in-binding><out-binding></out-binding><position x='204.5' y='55.40909090909091'/>
+</workflow-item>
+<presentation>
+<p-param name="issuerCn"><desc><![CDATA[issuerCn]]></desc>
+</p-param>
+</presentation></workflow>

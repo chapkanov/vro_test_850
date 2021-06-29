@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item2" object-name="workflow:name=generic" id="584c07fe-3d37-44a6-b381-842213c27c64"  version="0.0.0" api-version="3.1.0" allowed-operations="vef" restartMode="1" resumeFromFailedMode="0" >
+<display-name><![CDATA[ImportTrustedCertificateFromFileTest]]></display-name>
+<position x='100.0' y='50.0'/>
+<attrib name='certificateMime' type='MimeAttachment' read-only='false' ><value encoded='n'><![CDATA[__NULL__]]></value>
+</attrib>
+<attrib name='certificateResource' type='ResourceElement' read-only='false' ><value encoded='n'><![CDATA[dunes://service.dunes.ch/ResourceElement?id='5e31ef1d-5ce1-4298-a22b-4878a4f4d8af'&dunesName='ResourceElement']]></value>
+</attrib>
+<attrib name='issuerCn' type='string' read-only='false' ><value encoded='n'><![CDATA[vmware-test]]></value>
+</attrib>
+<workflow-item name='item0' type='end' end-mode='0' >
+<position x='664.5' y='45.40909090909091'/>
+</workflow-item>
+<workflow-item name='item1' out-name='item3' type='link' linked-workflow-id='93a7bb21-0255-4750-9293-2437abe9d2e5' >
+<display-name><![CDATA[Import a trusted certificate from a file]]></display-name>
+<in-binding><bind name='cer' type='MimeAttachment' export-name="certificateMime" ><description><![CDATA[Input file (cer format)]]></description>
+</bind>
+</in-binding><out-binding></out-binding><description><![CDATA[Imports an SSL certificate into the server trust store.]]></description>
+<position x='344.5' y='55.40909090909091'/>
+</workflow-item>
+<workflow-item name='item2' out-name='item1' type='task' >
+<display-name><![CDATA[Get Mime]]></display-name>
+<script encoded='false'><![CDATA[certificateMime = certificateResource.getContentAsMimeAttachment();]]></script>
+<in-binding><bind name='certificateResource' type='ResourceElement' export-name="certificateResource" ></bind>
+</in-binding><out-binding><bind name='certificateMime' type='MimeAttachment' export-name="certificateMime" ></bind>
+</out-binding><position x='204.5' y='55.40909090909091'/>
+</workflow-item>
+<workflow-item name='item3' out-name='item0' type='link' linked-workflow-id='7c7d4d58-89e1-469f-8024-60a3c885e40c' >
+<display-name><![CDATA[ValidateCertificateExists]]></display-name>
+<in-binding><bind name='issuerCn' type='string' export-name="issuerCn" ></bind>
+</in-binding><out-binding></out-binding><position x='484.5' y='55.40909090909091'/>
+</workflow-item>
+<presentation>
+</presentation></workflow>

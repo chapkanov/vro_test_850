@@ -1,0 +1,1 @@
+{"schema":{"in_0":{"id":"in_0","type":{"dataType":"string"},"label":"in_0","constraints":{"required":false}}},"layout":{"pages":[{"id":"page_za2hp8op","title":"General","sections":[{"id":"section_dvld6qia","fields":[{"id":"in_0","display":"textField","signpostPosition":"right-middle","state":{"visible":true,"read-only":false}}]}]}]},"itemId":""}

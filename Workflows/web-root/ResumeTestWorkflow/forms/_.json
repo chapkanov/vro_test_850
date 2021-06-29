@@ -1,0 +1,1 @@
+{"layout":{"pages":[{"id":"page_cibs8n20","sections":[{"id":"section_6d24osek","fields":[]},{"id":"section_41ed4e78","fields":[{"id":"fail","display":"checkbox","state":{"visible":true},"signpostPosition":"right-middle"}]}],"title":"General","state":{}}]},"schema":{"fail":{"type":{"dataType":"boolean"},"label":"fail"}},"options":{"externalValidations":[]},"itemId":""}

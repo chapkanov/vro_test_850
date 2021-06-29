@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item6" object-name="workflow:name=generic" id="91c4a8ac-095a-4142-a247-0b670319f06e"  version="0.0.0" api-version="3.1.0" allowed-operations="vef" restartMode="1" resumeFromFailedMode="0" >
+<display-name><![CDATA[DeleteTrustedCertificate]]></display-name>
+<position x='100.0' y='50.0'/>
+<attrib name='cert' type='Configurator:CA' read-only='false' ><description><![CDATA[Trusted Certificate to Delete]]></description>
+</attrib>
+<attrib name='issuerCn' type='string' read-only='false' ><value encoded='n'><![CDATA[vmware-test]]></value>
+</attrib>
+<attrib name='errorCode' type='string' read-only='false' ><value encoded='n'><![CDATA[The certificate exists after deleting]]></value>
+</attrib>
+<attrib name='certificateResource' type='ResourceElement' read-only='false' ><value encoded='n'><![CDATA[dunes://service.dunes.ch/ResourceElement?id='5e31ef1d-5ce1-4298-a22b-4878a4f4d8af'&dunesName='ResourceElement']]></value>
+</attrib>
+<attrib name='certificateMime' type='MimeAttachment' read-only='false' ><value encoded='n'><![CDATA[__NULL__]]></value>
+</attrib>
+<attrib name='sleepTime' type='number' read-only='false' ><value encoded='n'><![CDATA[5.0]]></value>
+<description><![CDATA[Time to sleep in seconds]]></description>
+</attrib>
+<workflow-note x='200.0' y='36.36363636363636' w='400.0' h='63.63636363636363' ><description><![CDATA[Test Setup]]></description>
+</workflow-note>
+<workflow-note x='900.0' y='27.272727272727273' w='240.0' h='118.18181818181817' ><description><![CDATA[The certificate must not exist, so we expect the validation to fail]]></description>
+</workflow-note>
+<workflow-item name='item1' out-name='item3' type='link' linked-workflow-id='8a70a326-ffd7-4fef-97e0-2002ac49f5bd' >
+<display-name><![CDATA[Delete a trusted certificate]]></display-name>
+<in-binding><bind name='cert' type='Configurator:CA' export-name="cert" ><description><![CDATA[Trusted Certificate to Delete]]></description>
+</bind>
+</in-binding><out-binding></out-binding><description><![CDATA[Deletes an SSL certificate from the server trust store.]]></description>
+<position x='764.5' y='55.40909090909091'/>
+</workflow-item>
+<workflow-item name='item2' out-name='item1' type='task' >
+<display-name><![CDATA[Get Certificate]]></display-name>
+<script encoded='false'><![CDATA[var certificates = Server.findAllForType("Configurator:CA");
+var i;
+var found = false;
+
+for(i=0; i<certificates.length && !found; i++){
+	if(certificates[i].issuerCn == issuerCn){
+		cert = certificates[i];
+		found = true;
+	}
+}
+
+if(!found){
+	throw "The certificate is not found";
+}]]></script>
+<in-binding><bind name='issuerCn' type='string' export-name="issuerCn" ></bind>
+</in-binding><out-binding><bind name='cert' type='Configurator:CA' export-name="cert" ></bind>
+</out-binding><position x='624.5' y='55.40909090909091'/>
+</workflow-item>
+<workflow-item name='item3' out-name='item0' catch-name='item4' throw-bind-name='errorCode' type='link' linked-workflow-id='7c7d4d58-89e1-469f-8024-60a3c885e40c' >
+<display-name><![CDATA[ValidateCertificateExists]]></display-name>
+<in-binding><bind name='issuerCn' type='string' export-name="issuerCn" ></bind>
+</in-binding><out-binding></out-binding><position x='904.5' y='55.40909090909091'/>
+</workflow-item>
+<workflow-item name='item0' throw-bind-name='errorCode' type='end' end-mode='1' >
+<position x='944.5' y='109.04545454545453'/>
+</workflow-item>
+<workflow-item name='item4' type='end' end-mode='0' >
+<position x='1084.5' y='45.40909090909091'/>
+</workflow-item>
+<workflow-item name='item5' out-name='item7' type='link' linked-workflow-id='93a7bb21-0255-4750-9293-2437abe9d2e5' >
+<display-name><![CDATA[Import a trusted certificate from a file]]></display-name>
+<in-binding><bind name='cer' type='MimeAttachment' export-name="certificateMime" ><description><![CDATA[Input file (cer format)]]></description>
+</bind>
+</in-binding><out-binding></out-binding><description><![CDATA[Imports an SSL certificate into the server trust store.]]></description>
+<position x='344.5' y='55.40909090909091'/>
+</workflow-item>
+<workflow-item name='item6' out-name='item5' type='task' >
+<display-name><![CDATA[Get Mime]]></display-name>
+<script encoded='false'><![CDATA[certificateMime = certificateResource.getContentAsMimeAttachment();]]></script>
+<in-binding><bind name='certificateResource' type='ResourceElement' export-name="certificateResource" ></bind>
+</in-binding><out-binding><bind name='certificateMime' type='MimeAttachment' export-name="certificateMime" ></bind>
+</out-binding><position x='204.5' y='55.40909090909091'/>
+</workflow-item>
+<workflow-item name='item7' prototype-id='sleep' out-name='item2' content-mode='x' type='task' >
+<display-name><![CDATA[Sleep]]></display-name>
+<script encoded='false'><![CDATA[//Auto-generated script
+if ( sleepTime != null )  {
+	System.sleep(sleepTime*1000);
+}
+else  {
+	throw "'sleepTime' is NULL";
+}
+]]></script>
+<in-binding><bind name='sleepTime' type='number' export-name="sleepTime" ><description><![CDATA[Time to sleep in seconds]]></description>
+</bind>
+</in-binding><out-binding></out-binding><description><![CDATA[Sleep a given number of seconds]]></description>
+<position x='484.5' y='55.40909090909091'/>
+</workflow-item>
+<presentation>
+</presentation></workflow>

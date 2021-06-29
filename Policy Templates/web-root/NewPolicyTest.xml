@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-policy name="NewPolicyTest" type="0" api-version="6.0.0" id="5c905933-1716-47c9-893b-3d4303ff1fb0" version="0.0.2">
+  <item tag="Policy Element 1" periode="every-minutes" when="(Europe/Sofia) 00," timezone="Europe/Sofia">
+    <event type="OnExecute" kind="trigger" active="false">
+      <workflow id="d4c0eeec-f144-4280-8403-80e808faa270">
+        <in-bindings>
+          <bind name="strInput" type="string" export-name="event.triggerName"/>
+        </in-bindings>
+      </workflow>
+    </event>
+  </item>
+</dunes-policy>

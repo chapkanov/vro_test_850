@@ -1,0 +1,359 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item5" object-name="workflow:name=generic" id="1718772c-3dd4-4d44-8de7-48be4198c13e" version="0.0.29" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Content initializer]]></display-name>
+  <position y="127.22727272727272" x="25.0"/>
+  <input>
+    <param name="setupRunningWorkflows" type="boolean"/>
+    <param name="setupScheduledWorkflows" type="boolean"/>
+    <param name="setupPolicyTemplatesAndPolicies" type="boolean"/>
+    <param name="specifyPolicyByName" type="boolean">
+      <description><![CDATA[If false all policy templates and policies will be created]]></description>
+    </param>
+    <param name="policyNames" type="Array/string"/>
+    <param name="startPolicies" type="boolean"/>
+    <param name="serverFQDN" type="string"/>
+    <param name="serverPort" type="string"/>
+    <param name="username" type="string">
+      <description><![CDATA[Username of the user to run the workflow. If null or empty, uses the current user]]></description>
+    </param>
+    <param name="password" type="string">
+      <description><![CDATA[Password]]></description>
+    </param>
+    <param name="setupPolicyTemplates" type="boolean"/>
+    <param name="setupPolicies" type="boolean"/>
+  </input>
+  <attrib name="configData" type="ConfigurationElement" read-only="false">
+    <value encoded="n"><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='3e27bff6-a569-4af3-8ad6-321d86e62bfc'&dunesName='ConfigurationElement']]></value>
+  </attrib>
+  <attrib name="waitForExecution" type="boolean" read-only="false">
+    <value encoded="n"><![CDATA[false]]></value>
+  </attrib>
+  <attrib name="executionsData" type="Array/Properties" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="resultData" type="ConfigurationElement" read-only="false">
+    <value encoded="n"><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='1c574c1e-6778-40e2-ab35-0de1289c5fa7'&dunesName='ConfigurationElement']]></value>
+  </attrib>
+  <attrib name="schedulesData" type="Array/Properties" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="policyData" type="ConfigurationElement" read-only="false">
+    <value encoded="n"><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='ee159d56-0ac6-48aa-9bac-32ba392818ed'&dunesName='ConfigurationElement']]></value>
+  </attrib>
+  <attrib name="customize" type="boolean" read-only="false">
+    <value encoded="n"><![CDATA[false]]></value>
+  </attrib>
+  <attrib name="executionTokens" type="Array/Any" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="scheduleTasks" type="Array/Task" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="policyTemplates" type="Array/Properties" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="policies" type="Array/Properties" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="policyConfigData" type="Array/Properties" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="policyTemplateConfigData" type="Array/Properties" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="baseURL" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="ignoreWarnings" type="boolean" read-only="false">
+    <value encoded="n"><![CDATA[true]]></value>
+    <description><![CDATA[If set to true, the certificate is accepted silently and the certificate is added to the trusted store]]></description>
+  </attrib>
+  <workflow-note x="400.0" y="118.18181818181816" w="780.0" h="69.0">
+    <description><![CDATA[Trigger workfow runs]]></description>
+  </workflow-note>
+  <workflow-note x="400.0" y="200.0" w="780.0" h="67.0">
+    <description><![CDATA[Schedule workflow execution]]></description>
+  </workflow-note>
+  <workflow-note x="400.0" y="281.81818181818176" w="780.0" h="74.0">
+    <description><![CDATA[Setup policy & policy templates]]></description>
+  </workflow-note>
+  <workflow-note x="400.0" y="363.6363636363636" w="780.0" h="86.0">
+    <description><![CDATA[Store data]]></description>
+  </workflow-note>
+  <workflow-item name="item1" out-name="item4" type="foreach">
+    <display-name><![CDATA[Foreach (Run Workflow)]]></display-name>
+    <in-binding>
+      <bind name="waitForExecution" type="boolean" export-name="waitForExecution"/>
+      <bind name="executionData" type="Array/Properties" export-name="*executionsData"/>
+    </in-binding>
+    <out-binding>
+      <bind name="workflowTokens" type="Array/Array" export-name="*executionTokens"/>
+    </out-binding>
+    <reference type="Workflow" id="c4a24f89-5274-447a-89ae-8bb00a3e9b3f"/>
+    <position y="137.22727272727272" x="1044.5"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item1" type="task">
+    <display-name><![CDATA[Prepare workflow exec data]]></display-name>
+    <script encoded="false"><![CDATA[System.log("*******************************************************************")
+System.log("Setup workflow executions")
+System.log("*******************************************************************")
+
+System.log("Prepare execution data")
+executionsData = configData.getAttributeWithKey("tokens").value
+executionTokenIds = new Array();]]></script>
+    <in-binding>
+      <bind name="configData" type="ConfigurationElement" export-name="configData"/>
+    </in-binding>
+    <out-binding>
+      <bind name="executionsData" type="Array/Properties" export-name="executionsData"/>
+      <bind name="executionTokenIds" type="Array/Any" export-name="executionTokens"/>
+    </out-binding>
+    <position y="137.22727272727272" x="704.5"/>
+  </workflow-item>
+  <workflow-item name="item6" out-name="item2" type="condition" alt-out-name="item4" comparator="0">
+    <display-name><![CDATA[Trigger workflow executions]]></display-name>
+    <script encoded="false"><![CDATA[//Generated by the system, cannot be edited
+return (setupRunningWorkflows == true) ;]]></script>
+    <in-binding>
+      <bind name="setupRunningWorkflows" type="boolean" export-name="setupRunningWorkflows"/>
+    </in-binding>
+    <condition name="setupRunningWorkflows" type="boolean" comparator="0" label="null">false</condition>
+    <position y="127.22727272727272" x="404.5"/>
+  </workflow-item>
+  <workflow-item name="item4" out-name="item12" type="condition" alt-out-name="item8" comparator="0">
+    <display-name><![CDATA[Schedule workflow executions]]></display-name>
+    <script encoded="false"><![CDATA[//Generated by the system, cannot be edited
+return (setupScheduledWorkflows == true) ;]]></script>
+    <in-binding>
+      <bind name="setupScheduledWorkflows" type="boolean" export-name="setupScheduledWorkflows"/>
+    </in-binding>
+    <condition name="setupScheduledWorkflows" type="boolean" comparator="0" label="null">false</condition>
+    <position y="209.04545454545453" x="405.0"/>
+  </workflow-item>
+  <workflow-item name="item8" out-name="item10" type="condition" alt-out-name="item0" comparator="0">
+    <display-name><![CDATA[Setup policy & policy templates]]></display-name>
+    <script encoded="false"><![CDATA[//Generated by the system, cannot be edited
+return (setupPolicyTemplatesAndPolicies == true) ;]]></script>
+    <in-binding>
+      <bind name="setupPolicyTemplatesAndPolicies" type="boolean" export-name="setupPolicyTemplatesAndPolicies"/>
+    </in-binding>
+    <condition name="setupPolicyTemplatesAndPolicies" type="boolean" comparator="0" label="null">false</condition>
+    <position y="299.95454545454544" x="405.0"/>
+  </workflow-item>
+  <workflow-item name="item9" type="end" end-mode="0">
+    <position y="381.77272727272725" x="1104.5"/>
+  </workflow-item>
+  <workflow-item name="item11" out-name="item8" type="foreach">
+    <display-name><![CDATA[Foreach (Schedule workflow execution)]]></display-name>
+    <in-binding>
+      <bind name="scheduleData" type="Array/Properties" export-name="*schedulesData"/>
+      <bind name="password" type="string" export-name="password">
+        <description><![CDATA[Password]]></description>
+      </bind>
+      <bind name="username" type="string" export-name="username">
+        <description><![CDATA[Username of the user to run the workflow. If null or empty, uses the current user]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="newTask" type="Array/Task" export-name="*scheduleTasks"/>
+    </out-binding>
+    <reference type="Workflow" id="9ce16d9a-3ff0-4892-8347-8bccd4ebadff"/>
+    <position y="219.04545454545453" x="1045.0"/>
+  </workflow-item>
+  <workflow-item name="item12" out-name="item11" type="task">
+    <display-name><![CDATA[Prepare scheduled exec data]]></display-name>
+    <script encoded="false"><![CDATA[System.log("*******************************************************************")
+System.log("Setup Schedules workflow executions")
+System.log("*******************************************************************")
+
+System.log("Prepare scheduled data")
+schedulesData = configData.getAttributeWithKey("tasks").value
+]]></script>
+    <in-binding>
+      <bind name="configData" type="ConfigurationElement" export-name="configData"/>
+    </in-binding>
+    <out-binding>
+      <bind name="schedulesData" type="Array/Properties" export-name="schedulesData"/>
+      <bind name="scheduleTaskIds" type="Array/Task" export-name="scheduleTasks"/>
+    </out-binding>
+    <position y="219.04545454545453" x="704.5"/>
+  </workflow-item>
+  <workflow-item name="item3" out-name="item0" type="link" linked-workflow-id="6b999e06-7cde-4849-bc47-83985d740ddd">
+    <display-name><![CDATA[SetupPoliciesAndPolicyTemplates]]></display-name>
+    <in-binding>
+      <bind name="customize" type="boolean" export-name="customize"/>
+      <bind name="policyNames" type="Array/string" export-name="policyNames"/>
+      <bind name="pass" type="string" export-name="password"/>
+      <bind name="user" type="string" export-name="username"/>
+      <bind name="serverFQDN" type="string" export-name="serverFQDN"/>
+      <bind name="port" type="string" export-name="serverPort"/>
+      <bind name="triggerPolicy" type="boolean" export-name="startPolicies"/>
+      <bind name="policyConfigurationData" type="Array/Properties" export-name="policyConfigData"/>
+      <bind name="policyTemplateConfigData" type="Array/Properties" export-name="policyTemplateConfigData"/>
+      <bind name="setupPolicyTemplates" type="boolean" export-name="setupPolicyTemplates"/>
+      <bind name="setupPolicies" type="boolean" export-name="setupPolicies"/>
+    </in-binding>
+    <out-binding>
+      <bind name="policies" type="Array/Properties" export-name="policies"/>
+      <bind name="policyTemplates" type="Array/Properties" export-name="policyTemplates"/>
+    </out-binding>
+    <position y="309.95454545454544" x="1045.0"/>
+  </workflow-item>
+  <workflow-item name="item0" out-name="item9" type="task">
+    <display-name><![CDATA[Store execution data]]></display-name>
+    <script encoded="false"><![CDATA[// Clean up 
+for each(var attribute in resultData.attributes){
+	System.log("Remove attribute with key " + attribute.name)
+	resultData.removeAttributeWithKey(attribute.name)
+}
+resultData.reload();
+System.sleep(1000)
+
+if(executionTokenIds){
+	resultData.setAttributeWithKey("tokens", toArray(executionTokenIds));
+}
+if(scheduleWokrflowIds){
+	System.log(executionTokenIds);
+	resultData.setAttributeWithKey("tasks", scheduleWokrflowIds);
+}
+if(policies){
+	resultData.setAttributeWithKey("policies", policies);
+}
+if(policyTemplates){
+	resultData.setAttributeWithKey("policyTemplates", policyTemplates);
+}
+
+resultData.reload();
+
+
+function toArray(arrayOfArrayExecs){
+	var result = new Array();
+	for each(var execAr in arrayOfArrayExecs){
+		for each(var token in execAr){
+			result.push(token);
+		}
+	}
+	
+	return result;
+}
+]]></script>
+    <in-binding>
+      <bind name="executionTokenIds" type="Array/Any" export-name="executionTokens"/>
+      <bind name="policies" type="Array/Properties" export-name="policies"/>
+      <bind name="scheduleWokrflowIds" type="Array/Task" export-name="scheduleTasks"/>
+      <bind name="policyTemplates" type="Array/Properties" export-name="policyTemplates"/>
+      <bind name="resultData" type="ConfigurationElement" export-name="resultData"/>
+    </in-binding>
+    <out-binding/>
+    <position y="391.77272727272725" x="405.0"/>
+  </workflow-item>
+  <workflow-item name="item10" out-name="item3" type="task">
+    <display-name><![CDATA[Prepare policy  data]]></display-name>
+    <script encoded="false"><![CDATA[System.log("*******************************************************************")
+System.log("Setup Policies & Policy Templates")
+System.log("*******************************************************************")
+
+System.log("Prepare execution data")
+policyConfigData = configData.getAttributeWithKey("policies").value
+policyTemplateConfigData = configData.getAttributeWithKey("policyTemplates").value
+
+]]></script>
+    <in-binding>
+      <bind name="configData" type="ConfigurationElement" export-name="configData"/>
+    </in-binding>
+    <out-binding>
+      <bind name="policyConfigData" type="Array/Properties" export-name="policyConfigData"/>
+      <bind name="policyTemplateConfigData" type="Array/Properties" export-name="policyTemplateConfigData"/>
+    </out-binding>
+    <position y="309.95454545454544" x="704.5"/>
+  </workflow-item>
+  <workflow-item name="item5" out-name="item7" type="condition" alt-out-name="item6" comparator="0">
+    <display-name><![CDATA[Decision]]></display-name>
+    <script encoded="false"><![CDATA[//Generated by the system, cannot be edited
+return (serverFQDN != null) ;]]></script>
+    <in-binding>
+      <bind name="serverFQDN" type="string" export-name="serverFQDN"/>
+    </in-binding>
+    <condition name="serverFQDN" type="string" comparator="3" label="null"/>
+    <position y="127.22727272727272" x="124.5"/>
+  </workflow-item>
+  <workflow-item name="item7" out-name="item13" type="task">
+    <display-name><![CDATA[Build URL]]></display-name>
+    <script encoded="false"><![CDATA[baseURL = "https://" + serverFQDN + ":" + serverPort]]></script>
+    <in-binding>
+      <bind name="serverFQDN" type="string" export-name="serverFQDN"/>
+      <bind name="serverPort" type="string" export-name="serverPort"/>
+    </in-binding>
+    <out-binding>
+      <bind name="baseURL" type="string" export-name="baseURL"/>
+    </out-binding>
+    <position y="219.04545454545453" x="124.5"/>
+  </workflow-item>
+  <workflow-item name="item13" out-name="item6" type="link" linked-workflow-id="c5a874a2-e8e7-480d-bdde-d1a80b8a3011">
+    <display-name><![CDATA[Import a certificate from URL]]></display-name>
+    <in-binding>
+      <bind name="url" type="string" export-name="baseURL">
+        <description><![CDATA[URL or just host:port for non-HTTPS SSL services:]]></description>
+      </bind>
+      <bind name="ignoreWarnings" type="boolean" export-name="ignoreWarnings">
+        <description><![CDATA[If set to true, the certificate is accepted silently and the certificate is added to the trusted store]]></description>
+      </bind>
+    </in-binding>
+    <out-binding/>
+    <description><![CDATA[Imports an SSL certificate into the server trust store.]]></description>
+    <position y="219.04545454545453" x="264.5"/>
+  </workflow-item>
+  <presentation>
+    <p-step>
+      <title><![CDATA[Target Server]]></title>
+      <p-param name="serverFQDN">
+        <desc><![CDATA[serverFQDN]]></desc>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#isLocalServer]]></p-qual>
+      </p-param>
+      <p-param name="serverPort">
+        <desc><![CDATA[serverPort]]></desc>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#isLocalServer]]></p-qual>
+      </p-param>
+      <p-param name="username">
+        <desc><![CDATA[Current user name]]></desc>
+      </p-param>
+      <p-param name="password">
+        <desc><![CDATA[Currnet user password]]></desc>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[Setup Entities]]></title>
+      <p-param name="setupRunningWorkflows">
+        <desc><![CDATA[Trigger workflows]]></desc>
+      </p-param>
+      <p-param name="setupScheduledWorkflows">
+        <desc><![CDATA[Schedule workflow execution]]></desc>
+      </p-param>
+      <p-param name="setupPolicyTemplatesAndPolicies">
+        <desc><![CDATA[Setup policy and policy templates]]></desc>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[Policy & Policy Templates]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#setupPolicyTemplatesAndPolicies]]></p-qual>
+      <p-param name="specifyPolicyByName">
+        <desc><![CDATA[If false all policy templates and policies will be created]]></desc>
+      </p-param>
+      <p-param name="policyNames">
+        <desc><![CDATA[Policy entity data]]></desc>
+        <p-qual kind="ognl" name="genericEnumeration" type="Array/string"><![CDATA[GetAction("com.vmware.eso.vro","getConfigurationElementAttributeNames").call( #policyData )]]></p-qual>
+        <p-qual kind="static" name="sameValues" type="boolean"><![CDATA[false]]></p-qual>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[!#specifyPolicyByName]]></p-qual>
+      </p-param>
+      <p-param name="setupPolicyTemplates">
+        <desc><![CDATA[setupPolicyTemplates]]></desc>
+      </p-param>
+      <p-param name="setupPolicies">
+        <desc><![CDATA[setupPolicies]]></desc>
+      </p-param>
+      <p-param name="startPolicies">
+        <desc><![CDATA[Start policy]]></desc>
+      </p-param>
+    </p-step>
+  </presentation>
+</workflow>

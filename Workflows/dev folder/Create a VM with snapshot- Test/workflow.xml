@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="415d022f-e58b-48f1-ab7b-40108f1bdd96" editor-version="2.0" version="0.2.1" api-version="6.0.0" allowed-operations="vef" restartMode="1" resumeFromFailedMode="0">
+    <display-name>Create a VM with snapshot- Test</display-name>
+    <position y="50.0" x="100.0"/>
+    <input>
+        <param name="snapshotName" type="string"/>
+        <param name="vmMemory" type="number"/>
+        <param name="pool" type="VC:ResourcePool"/>
+    </input>
+    <output/>
+    <attrib name="snapshot1" type="VC:VirtualMachineSnapshot">
+        <value encoded="n"/>
+    </attrib>
+    <attrib name="VMs" type="VC:VirtualMachine">
+        <value encoded="n"/>
+    </attrib>
+    <attrib name="sleepTime" type="number">
+        <value encoded="n">20.0</value>
+    </attrib>
+    <attrib name="newNameM" type="string">
+        <value encoded="n"></value>
+    </attrib>
+    <attrib name="snapshot2" type="VC:VirtualMachineSnapshot">
+        <value encoded="n"/>
+    </attrib>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="358.0487804878049" x="784.8780487804878"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item3" type="input" comparator="0">
+        <display-name>User interaction</display-name>
+        <in-binding>
+            <bind name="security.group" type="LdapGroup">
+                <description>Any user member of this group will be authorized to fill in this form.</description>
+            </bind>
+            <bind name="security.assignees" type="Array/LdapUser">
+                <description>Any user from this array of users will be authorized to fill in this form</description>
+            </bind>
+            <bind name="security.assignee.groups" type="Array/LdapGroup">
+                <description>Any user member of any of the groups will be authorized to fill in this form.</description>
+            </bind>
+            <bind name="timeout.date" type="Date">
+                <description>If not null, this input item will wait until date and will continue workflow execution.</description>
+            </bind>
+        </in-binding>
+        <out-binding>
+            <bind name="VMs" type="VC:VirtualMachine" export-name="VMs"/>
+        </out-binding>
+        <description>Use this element to set up a user interaction.</description>
+        <presentation/>
+        <position y="60.0" x="180.0"/>
+    </workflow-item>
+    <workflow-item name="item3" out-name="item4" alt-out-name="item5" type="custom-condition" comparator="0">
+        <display-name>Decision</display-name>
+        <script encoded="false">if(VMs.state=="poweredOn"){
+    return true;
+}else {
+return false;
+}</script>
+        <in-binding>
+            <bind name="VMs" type="VC:VirtualMachine" export-name="VMs"/>
+        </in-binding>
+        <out-binding/>
+        <description>Custom decision based on a custom script.</description>
+        <position y="50.0" x="320.0"/>
+    </workflow-item>
+    <workflow-item name="item4" out-name="item6" type="link" linked-workflow-id="BD80808080808080808080808080808058C180800122528313869552e41805bb1" comparator="0">
+        <display-name>Power off virtual machine and wait</display-name>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="VMs">
+                <description>Virtual machine to power off</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description> </description>
+        <position y="60.0" x="460.0"/>
+    </workflow-item>
+    <workflow-item name="item5" out-name="item4" type="link" linked-workflow-id="BD808080808080808080808080808080CCC280800122528313869552e41805bb1" comparator="0">
+        <display-name>Start virtual machine and wait</display-name>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="VMs">
+                <description>Virtual machine to start</description>
+            </bind>
+            <bind name="host" type="VC:HostSystem" export-name="">
+                <description>[Optional] The host on which to power on the virtual machine. The host must be part of the same compute resource with which the virtual machine is currently associated. Uses the currently associated host if you do not specify a new host or if you specify an incompatible host.</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description> </description>
+        <position y="170.0" x="320.0"/>
+    </workflow-item>
+    <workflow-item name="item6" out-name="item7" type="link" linked-workflow-id="BD80808080808080808080808080808053C180800122528313869552e41805bb1" comparator="0">
+        <display-name>Create a snapshot</display-name>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="VMs">
+                <description>Virtual machine of which to create a snapshot</description>
+            </bind>
+            <bind name="name" type="string" export-name="snapshotName">
+                <description>Snapshot name. The name need not be unique for this virtual machine.</description>
+            </bind>
+            <bind name="description" type="string" export-name="">
+                <description>Snapshot description.</description>
+            </bind>
+            <bind name="memory" type="boolean" export-name="">
+                <description>If TRUE, the snapshot includes a dump of the internal state of the virtual machine (a memory dump). </description>
+            </bind>
+            <bind name="quiesce" type="boolean" export-name="">
+                <description>If TRUE and the virtual machine is powered on when the snapshot is taken, VMware Tools are used to quiesce the file system in the virtual machine.</description>
+            </bind>
+        </in-binding>
+        <out-binding>
+            <bind name="snapshot" type="VC:VirtualMachineSnapshot" export-name="">
+                <description>The snapshot created</description>
+            </bind>
+        </out-binding>
+        <description> </description>
+        <position y="60.0" x="600.0"/>
+    </workflow-item>
+    <workflow-item name="item7" out-name="item8" type="task" prototype-id="sleep" content-mode="x" comparator="0">
+        <display-name>Sleep</display-name>
+        <script encoded="false">//Auto-generated script
+if ( sleepTime !== null )  {
+	System.sleep(sleepTime * 1000);
+}else  {
+	throw "'sleepTime' is NULL"; 
+}</script>
+        <in-binding>
+            <bind name="sleepTime" type="number" export-name="sleepTime">
+                <description>Time to sleep in seconds</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description>Sleep a given number of seconds.</description>
+        <position y="60.0" x="700.0"/>
+    </workflow-item>
+    <workflow-item name="item8" out-name="item9" type="link" linked-workflow-id="BD808080808080808080808080808080A8C380800122528313869552e41805bb1" comparator="0">
+        <display-name>Change RAM</display-name>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="VMs">
+                <description>Virtual machine on which to change the amount of RAM</description>
+            </bind>
+            <bind name="memory" type="number" export-name="vmMemory">
+                <description>Memory size in MB</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description> </description>
+        <position y="60.0" x="800.0"/>
+    </workflow-item>
+    <workflow-item name="item9" out-name="item10" type="task" prototype-id="sleep" content-mode="x" comparator="0">
+        <display-name>Sleep</display-name>
+        <script encoded="false">//Auto-generated script
+if ( sleepTime !== null )  {
+	System.sleep(sleepTime * 1000);
+}else  {
+	throw "'sleepTime' is NULL"; 
+}</script>
+        <in-binding>
+            <bind name="sleepTime" type="number" export-name="sleepTime">
+                <description>Time to sleep in seconds</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description>Sleep a given number of seconds.</description>
+        <position y="63.170731707317074" x="915.609756097561"/>
+    </workflow-item>
+    <workflow-item name="item10" out-name="item11" type="link" linked-workflow-id="BD80808080808080808080808080808093C380800122528313869552e41805bb1" comparator="0">
+        <display-name>Mark as template</display-name>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="VMs">
+                <description>Virtual machine to mark as template</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description> </description>
+        <position y="124.14634146341464" x="915.609756097561"/>
+    </workflow-item>
+    <workflow-item name="item11" out-name="item15" type="link" linked-workflow-id="BD8080808080808080808080808080802AC280800122528313869552e41805bb1" comparator="0">
+        <display-name>Mark as virtual machine</display-name>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="VMs">
+                <description>The template to mark as virtual machine</description>
+            </bind>
+            <bind name="pool" type="VC:ResourcePool" export-name="pool">
+                <description>Resource pool in which the virtual machine is intended to run</description>
+            </bind>
+            <bind name="host" type="VC:HostSystem" export-name="">
+                <description>Target host or cluster on which the virtual machine is intended to run</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description> </description>
+        <position y="185.1219512195122" x="915.609756097561"/>
+    </workflow-item>
+    <workflow-item name="item13" out-name="item14" type="input" comparator="0">
+        <display-name>User interaction</display-name>
+        <in-binding>
+            <bind name="security.group" type="LdapGroup">
+                <description>Any user member of this group will be authorized to fill in this form.</description>
+            </bind>
+            <bind name="security.assignees" type="Array/LdapUser">
+                <description>Any user from this array of users will be authorized to fill in this form</description>
+            </bind>
+            <bind name="security.assignee.groups" type="Array/LdapGroup">
+                <description>Any user member of any of the groups will be authorized to fill in this form.</description>
+            </bind>
+            <bind name="timeout.date" type="Date">
+                <description>If not null, this input item will wait until date and will continue workflow execution.</description>
+            </bind>
+        </in-binding>
+        <out-binding>
+            <bind name="snapshot1" type="VC:VirtualMachineSnapshot" export-name="snapshot1"/>
+        </out-binding>
+        <description>Use this element to set up a user interaction.</description>
+        <presentation/>
+        <position y="307.07317073170736" x="915.609756097561"/>
+    </workflow-item>
+    <workflow-item name="item14" out-name="item0" type="link" linked-workflow-id="BD80808080808080808080808080808010C280800122528313869552e41805bb1" comparator="0">
+        <display-name>Revert to snapshot and wait</display-name>
+        <in-binding>
+            <bind name="snapshot" type="VC:VirtualMachineSnapshot" export-name="snapshot1">
+                <description>Snapshot to which to revert</description>
+            </bind>
+            <bind name="host" type="VC:HostSystem" export-name="">
+                <description>Choice of host for the virtual machine (optional)</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description> </description>
+        <position y="368.0487804878049" x="915.609756097561"/>
+    </workflow-item>
+    <workflow-item name="item15" out-name="item13" type="link" linked-workflow-id="BD808080808080808080808080808080F0C280800122528313869552e41805bb1" comparator="0">
+        <display-name>Rename virtual machine</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="VMs">
+                <description>Virtual machine to rename</description>
+            </bind>
+            <bind name="newName" type="string" export-name="newNameM">
+                <description>New virtual machine name</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description> </description>
+        <position y="246.09756097560978" x="915.609756097561"/>
+    </workflow-item>
+</ns2:workflow>

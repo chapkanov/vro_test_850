@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item0" object-name="workflow:name=generic" id="84ecbb23-5f5b-465a-8c3b-dae20f2ffcc1" editor-version="2.0" version="0.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>forms testing</display-name>
+    <position y="50.0" x="100.0"/>
+    <input>
+        <param name="in_0" type="Array/string"/>
+        <param name="in_num" type="Array/number"/>
+        <param name="in_date" type="Array/Date"/>
+        <param name="in_sdk_obj" type="Array/VC:SdkConnection"/>
+        <param name="in_com_array" type="CompositeType(field:Array/string,field_1:Array/string):CompositeTypeVar"/>
+        <param name="in_str" type="Array/string"/>
+    </input>
+    <output/>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="50.0" x="240.0"/>
+    </workflow-item>
+</ns2:workflow>

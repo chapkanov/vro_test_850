@@ -1,0 +1,1084 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="87ace4e4-b7cd-428c-b4ec-83e72e2a9ef1" version="0.0.10" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[PluginDataConfigurator]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="pluginName" type="string"/>
+    <param name="ps_name" type="string">
+      <description><![CDATA[Name of the specified PowerShell host]]></description>
+    </param>
+    <param name="ps_type" type="string">
+      <description><![CDATA[Host type]]></description>
+    </param>
+    <param name="ps_transportProtocol" type="string">
+      <description><![CDATA[Used in case of WinRM option is choosen to determine the transport protocol to either HTTP or HTTPS]]></description>
+    </param>
+    <param name="ps_port" type="string">
+      <description><![CDATA[The port for the WinRM communication]]></description>
+    </param>
+    <param name="ps_hostName" type="string">
+      <description><![CDATA[Host name or IP of the remote Power Shell machine]]></description>
+    </param>
+    <param name="ps_username" type="string">
+      <description><![CDATA[User name]]></description>
+    </param>
+    <param name="ps_password" type="SecureString">
+      <description><![CDATA[Password]]></description>
+    </param>
+    <param name="ps_sessionMode" type="string">
+      <description><![CDATA[Session mode]]></description>
+    </param>
+    <param name="ps_authentication" type="string">
+      <description><![CDATA[Used in case of WinRM option choosen to determine authentication schema. Supports Basic and Kerberos authentication schema.]]></description>
+    </param>
+    <param name="ps_acceptAllCertificates" type="boolean">
+      <description><![CDATA[Accept all certificates]]></description>
+    </param>
+    <param name="ps_shellCodePage" type="string">
+      <description><![CDATA[shellCodePage]]></description>
+    </param>
+    <param name="iaas_name" type="string">
+      <description><![CDATA[Host's name]]></description>
+    </param>
+    <param name="iaas_hostAddress" type="string">
+      <description><![CDATA[Host address]]></description>
+    </param>
+    <param name="iaas_authUserName" type="string">
+      <description><![CDATA[Authentication user name]]></description>
+    </param>
+    <param name="iaas_authPassword" type="SecureString">
+      <description><![CDATA[Authentication password]]></description>
+    </param>
+    <param name="iaas_connectionTimeout" type="number">
+      <description><![CDATA[Connection timeout]]></description>
+    </param>
+    <param name="iaas_operationTimeout" type="number">
+      <description><![CDATA[Operation timeout]]></description>
+    </param>
+    <param name="iaas_workstation" type="string">
+      <description><![CDATA[Workstation for NTLM authentication]]></description>
+    </param>
+    <param name="iaas_domain" type="string">
+      <description><![CDATA[Domain for NTLM authentication]]></description>
+    </param>
+    <param name="iaas_autoAccept" type="boolean">
+      <description><![CDATA[Automatically install SSL certificates]]></description>
+    </param>
+    <param name="iaas_addProxySettings" type="boolean">
+      <description><![CDATA[Use proxy]]></description>
+    </param>
+    <param name="iaas_proxyHost" type="string">
+      <description><![CDATA[Proxy host]]></description>
+    </param>
+    <param name="iaas_proxyPort" type="number">
+      <description><![CDATA[Proxy port]]></description>
+    </param>
+    <param name="iaas_authentication" type="string">
+      <description><![CDATA[Host's authentication type]]></description>
+    </param>
+    <param name="iaas_defaultConnectionSettings" type="boolean">
+      <description><![CDATA[Default connection settings]]></description>
+    </param>
+    <param name="vapi_endpointUrl" type="string">
+      <description><![CDATA[vAPI endpoint URL to add  (eg. https://[hostname]/api)]]></description>
+    </param>
+    <param name="vapi_username" type="string">
+      <description><![CDATA[User name of the user that Orchestrator will use to connect to the vAPI endpoint]]></description>
+    </param>
+    <param name="vapi_password" type="SecureString">
+      <description><![CDATA[Password of the user that Orchestrator will use to connect to the vAPI endpoint]]></description>
+    </param>
+    <param name="vapi_ignoreCertificateWarnings" type="boolean">
+      <description><![CDATA[If set to true,the vAPI endpoint certificate is accepted silently and the certificate is added to the trusted store]]></description>
+    </param>
+    <param name="vapi_useSecureConnection" type="boolean">
+      <description><![CDATA[If set to Yes, secure protocol connection will be used to connect to vAPI endpoint]]></description>
+    </param>
+    <param name="soap_name" type="string">
+      <description><![CDATA[Name of the host]]></description>
+    </param>
+    <param name="soap_wsdlUri" type="string">
+      <description><![CDATA[URI to the WSDL file of the external service]]></description>
+    </param>
+    <param name="soap_connectionTimeout" type="number">
+      <description><![CDATA[Connection timeout in seconds]]></description>
+    </param>
+    <param name="soap_requestTimeout" type="number">
+      <description><![CDATA[Request timeout in seconds]]></description>
+    </param>
+    <param name="soap_authenticationType" type="string">
+      <description><![CDATA[Authentication type]]></description>
+    </param>
+    <param name="soap_sessionMode" type="string">
+      <description><![CDATA[Session mode]]></description>
+    </param>
+    <param name="soap_username" type="string">
+      <description><![CDATA[User name]]></description>
+    </param>
+    <param name="soap_password" type="SecureString">
+      <description><![CDATA[Password]]></description>
+    </param>
+    <param name="soap_isWsdlLocal" type="boolean">
+      <description><![CDATA[If true, search for WSDL from URL; if false, take as content]]></description>
+    </param>
+    <param name="soap_wsdlContent" type="string">
+      <description><![CDATA[WSDL content]]></description>
+    </param>
+    <param name="soap_domain" type="string">
+      <description><![CDATA[NTLM domain]]></description>
+    </param>
+    <param name="soap_workstation" type="string">
+      <description><![CDATA[NTLM workstation]]></description>
+    </param>
+    <param name="soap_spn" type="string">
+      <description><![CDATA[Kerberos service SPN]]></description>
+    </param>
+    <param name="soap_useProxy" type="boolean">
+      <description><![CDATA[Use Proxy]]></description>
+    </param>
+    <param name="soap_proxyHost" type="string">
+      <description><![CDATA[Proxy host]]></description>
+    </param>
+    <param name="soap_proxyPort" type="number">
+      <description><![CDATA[Proxy port]]></description>
+    </param>
+    <param name="vra_name" type="string">
+      <description><![CDATA[Host name]]></description>
+    </param>
+    <param name="vra_url" type="string">
+      <description><![CDATA[Host URL]]></description>
+    </param>
+    <param name="vra_tenant" type="string">
+      <description><![CDATA[Tenant]]></description>
+    </param>
+    <param name="vra_authUsername" type="string">
+      <description><![CDATA[Authentication username]]></description>
+    </param>
+    <param name="vra_authPassword" type="SecureString">
+      <description><![CDATA[Authentication password]]></description>
+    </param>
+    <param name="vra_connectionTimeout" type="number">
+      <description><![CDATA[Connection timeout]]></description>
+    </param>
+    <param name="vra_operationTimeout" type="number">
+      <description><![CDATA[Operation timeout]]></description>
+    </param>
+    <param name="vra_sessionMode" type="string">
+      <description><![CDATA[Session mode]]></description>
+    </param>
+    <param name="vra_acceptAllCertificates" type="boolean">
+      <description><![CDATA[Automatically install SSL certificates]]></description>
+    </param>
+    <param name="vra_pageSize" type="number">
+      <description><![CDATA[Maximum page size for objects retrieved from this host]]></description>
+    </param>
+    <param name="ssh_hostname" type="string">
+      <description><![CDATA[The hostname of the SSH Host]]></description>
+    </param>
+    <param name="ssh_port" type="number">
+      <description><![CDATA[The target port]]></description>
+    </param>
+    <param name="ssh_username" type="string">
+      <description><![CDATA[The username]]></description>
+    </param>
+    <param name="ssh_passwordAuthentication" type="boolean">
+      <description><![CDATA[Sets authentication to password or key file]]></description>
+    </param>
+    <param name="ssh_password" type="SecureString">
+      <description><![CDATA[The password]]></description>
+    </param>
+    <param name="ssh_passphrase" type="SecureString">
+      <description><![CDATA[Private key pass-phrase]]></description>
+    </param>
+    <param name="ssh_certificatePath" type="string">
+      <description><![CDATA[Path to the private key]]></description>
+    </param>
+    <param name="ssh_rootFolders" type="Array/string">
+      <description><![CDATA[The Root Folders (optional)]]></description>
+    </param>
+    <param name="ad_name" type="string">
+      <description><![CDATA[Configuration name]]></description>
+    </param>
+    <param name="ad_host" type="string">
+      <description><![CDATA[Active Directory host IP/URL.]]></description>
+    </param>
+    <param name="ad_port" type="number">
+      <description><![CDATA[Port (default: 389)]]></description>
+    </param>
+    <param name="ad_ldapBase" type="string">
+      <description><![CDATA[Root]]></description>
+    </param>
+    <param name="ad_useSSL" type="boolean">
+      <description><![CDATA[Use SSL]]></description>
+    </param>
+    <param name="ad_defaultDomain" type="string">
+      <description><![CDATA[Default domain]]></description>
+    </param>
+    <param name="ad_useSharedSession" type="boolean">
+      <description><![CDATA[Use a shared session]]></description>
+    </param>
+    <param name="ad_sharedUserName" type="string">
+      <description><![CDATA[User name for shared session]]></description>
+    </param>
+    <param name="ad_sharedUserPassword" type="SecureString">
+      <description><![CDATA[Password for shared session]]></description>
+    </param>
+    <param name="ad_ignoreWarnings" type="boolean">
+      <description><![CDATA[Do not ask for confirmation when importing SSL certificate.]]></description>
+    </param>
+    <param name="ad_followReferrals" type="boolean">
+      <description><![CDATA[Indicates whether associated connections should attempt to follow any referrals that they encounter.]]></description>
+    </param>
+    <param name="ad_connectTimeoutMillis" type="number">
+      <description><![CDATA[The maximum length of time in milliseconds to wait for the connection to be established before failing]]></description>
+    </param>
+    <param name="ad_loadBalancingMode" type="string">
+      <description><![CDATA[ Client-side failover and load balancing. If the server set is configured with information about multiple directory servers, then it will be responsible for selecting which server to use and establishing the connection. If the initially-selected server is not available, then it may attempt to connect to one or more of the other defined servers before giving up and throwing an exception.  ]]></description>
+    </param>
+    <param name="ad_alternativeHosts" type="Array/string">
+      <description><![CDATA[ The addresses of the directory servers to which the connections should be established.]]></description>
+    </param>
+    <param name="mn_host" type="string">
+      <description><![CDATA[Orchestrator server's host address]]></description>
+    </param>
+    <param name="mn_port" type="number">
+      <description><![CDATA[Orchestrator server's port]]></description>
+    </param>
+    <param name="mn_isShared" type="boolean">
+      <description><![CDATA[The way to connect to the remote server.]]></description>
+    </param>
+    <param name="mn_user" type="string">
+      <description><![CDATA[Orchestrator server's user]]></description>
+    </param>
+    <param name="mn_pass" type="SecureString">
+      <description><![CDATA[Orchestrator server user's password]]></description>
+    </param>
+    <param name="mn_connectionTimeout" type="number">
+      <description><![CDATA[Connection timeout (seconds)]]></description>
+    </param>
+    <param name="mn_socketTimeout" type="number">
+      <description><![CDATA[Socket timeout (seconds)]]></description>
+    </param>
+    <param name="mn_generateProxyWorkflows" type="boolean">
+      <description><![CDATA[Generate proxy workflows for remote server]]></description>
+    </param>
+    <param name="mn_ignoreWarnings" type="boolean">
+      <description><![CDATA[If set to true, the certificate is accepted silently and the certificate is added to the trusted store]]></description>
+    </param>
+    <param name="mn_retryTimeout" type="number">
+      <description><![CDATA[Retry timeout (minutes). Specifies the time proxy workflows wait to receive a notification from the remote Orchestrator server in the event of no connectivity.]]></description>
+    </param>
+    <param name="vc_enabled" type="boolean">
+      <description><![CDATA[Enables this vCenter Server instance for orchestration]]></description>
+    </param>
+    <param name="vc_host" type="string">
+      <description><![CDATA[IP or host name of the vCenter Server instance to add]]></description>
+    </param>
+    <param name="vc_path" type="string">
+      <description><![CDATA[Location of the SDK to use to connect to the vCenter Server instance]]></description>
+    </param>
+    <param name="vc_sessionPerUser" type="boolean">
+      <description><![CDATA[Specifies the method to manage user access to the vCenter Server system. If this is set to false, the method is share a unique session.]]></description>
+    </param>
+    <param name="vc_userName" type="string">
+      <description><![CDATA[User name of the user that Orchestrator will use to connect to the vCenter Server instance.]]></description>
+    </param>
+    <param name="vc_password" type="SecureString">
+      <description><![CDATA[Password of the user that Orchestrator will use to connect to the vCenter Server instance.]]></description>
+    </param>
+    <param name="vc_domain" type="string">
+      <description><![CDATA[Domain name. This is used only if method session per user is set]]></description>
+    </param>
+    <param name="vc_ignoreCertificateWarnings" type="boolean">
+      <description><![CDATA[If set to true,the vCenter Server instance certificate is accepted silently and the certificate is added to the trusted store]]></description>
+    </param>
+    <param name="vc_pbmUrl" type="string">
+      <description><![CDATA[URL of PBM endpoint]]></description>
+    </param>
+    <param name="vc_smsUrl" type="string">
+      <description><![CDATA[URL of SMS endpoint]]></description>
+    </param>
+    <param name="rest_name" type="string">
+      <description><![CDATA[Host's name]]></description>
+    </param>
+    <param name="rest_url" type="string">
+      <description><![CDATA[Host's base URL]]></description>
+    </param>
+    <param name="rest_authentication" type="string">
+      <description><![CDATA[Host's authentication type]]></description>
+    </param>
+    <param name="rest_authUserName" type="string">
+      <description><![CDATA[Authentication user name]]></description>
+    </param>
+    <param name="rest_authPassword" type="SecureString">
+      <description><![CDATA[Authentication password]]></description>
+    </param>
+    <param name="rest_consumerKey" type="string">
+      <description><![CDATA[Consumer key]]></description>
+    </param>
+    <param name="rest_consumerSecret" type="SecureString">
+      <description><![CDATA[Consumer secret]]></description>
+    </param>
+    <param name="rest_accessToken" type="string">
+      <description><![CDATA[Access token]]></description>
+    </param>
+    <param name="rest_accessTokenSecret" type="SecureString">
+      <description><![CDATA[Access token secret]]></description>
+    </param>
+    <param name="rest_connectionTimeout" type="number">
+      <description><![CDATA[Connection timeout]]></description>
+    </param>
+    <param name="rest_operationTimeout" type="number">
+      <description><![CDATA[Operation timeout]]></description>
+    </param>
+    <param name="rest_sessionMode" type="string">
+      <description><![CDATA[Session mode]]></description>
+    </param>
+    <param name="rest_oauth2Token" type="string">
+      <description><![CDATA[OAuth 2.0 token]]></description>
+    </param>
+    <param name="rest_workstation" type="string">
+      <description><![CDATA[Workstation  for NTLM authentication]]></description>
+    </param>
+    <param name="rest_domain" type="string">
+      <description><![CDATA[Domain  for NTLM authentication]]></description>
+    </param>
+    <param name="rest_useProxy" type="boolean">
+      <description><![CDATA[Use Proxy]]></description>
+    </param>
+    <param name="rest_proxyHost" type="string">
+      <description><![CDATA[Proxy host]]></description>
+    </param>
+    <param name="rest_proxyPort" type="number">
+      <description><![CDATA[Proxy port]]></description>
+    </param>
+    <param name="rest_ignoreWarnings" type="boolean">
+      <description><![CDATA[If set to true, the certificate is accepted silently and the certificate is added to the trusted store]]></description>
+    </param>
+    <param name="rest_hostVerification" type="boolean">
+      <description><![CDATA[Verify whether the target hostname matches the names stored inside the server's X.509 certificate]]></description>
+    </param>
+    <param name="rest_key" type="Configurator:Key">
+      <description><![CDATA[The PrivateKeyEntry to use for client certificate authentication.]]></description>
+    </param>
+    <param name="rest_proxyAuthentication" type="string">
+      <description><![CDATA[Proxy AuthenticationType]]></description>
+    </param>
+    <param name="rest_proxyAuthUserName" type="string">
+      <description><![CDATA[Proxy user name]]></description>
+    </param>
+    <param name="rest_proxyAuthPassword" type="SecureString">
+      <description><![CDATA[Proxy password]]></description>
+    </param>
+    <param name="rest_proxySessionMode" type="string">
+      <description><![CDATA[Proxy Session mode]]></description>
+    </param>
+    <param name="rest_autoUrlRedirection" type="boolean">
+      <description><![CDATA[Automatically URL redirection]]></description>
+    </param>
+    <param name="rest_parallelRequestExecution" type="boolean"/>
+    <param name="sql_name" type="string">
+      <description><![CDATA[Name of the specified database]]></description>
+    </param>
+    <param name="sql_type" type="string">
+      <description><![CDATA[Database type]]></description>
+    </param>
+    <param name="sql_connectionURL" type="string">
+      <description><![CDATA[Connection URL]]></description>
+    </param>
+    <param name="sql_username" type="string">
+      <description><![CDATA[User name]]></description>
+    </param>
+    <param name="sql_password" type="SecureString">
+      <description><![CDATA[Password]]></description>
+    </param>
+    <param name="sql_sessionMode" type="string">
+      <description><![CDATA[Session mode]]></description>
+    </param>
+    <param name="pluginConfigurationName" type="string"/>
+    <param name="vc_port" type="number"/>
+    <param name="vapi_addEndpoint" type="boolean"/>
+  </input>
+  <attrib name="allPluginsData" type="ConfigurationElement" read-only="false">
+    <value encoded="n"><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='290ff911-f4fb-46ee-af55-92babdf0e54f'&dunesName='ConfigurationElement']]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="404.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Create configuration]]></display-name>
+    <script encoded="false"><![CDATA[var pluginConfigurationData;
+if(allPluginsData.getAttributeWithKey(pluginName.toUpperCase())){
+	pluginData = allPluginsData.getAttributeWithKey(pluginName.toUpperCase()).value
+}else{
+	pluginData = new Properties();
+	pluginData.put("configWorkflowId", getPluginConfigurationProperty(pluginName, "workflowid"))
+}
+
+var pluginConfigurations = pluginData.get("configurations");
+if(pluginConfigurations == null){
+	pluginConfigurations = new Properties();
+}
+//  New Configuraion
+
+
+var pluginPrefix = getPluginConfigurationProperty(pluginName, "prefix");
+var configuration = new Properties()
+workflowId = workflow.currentWorkflow.id
+currentWorkflow = System.getModule("com.vmware.library.workflow").getWorkflowById(workflowId);
+
+for each(var paramName in workflow.getInputParameters().keys){
+	
+	if(paramName.indexOf(pluginPrefix) == 0){
+		var param = getInputParameter(currentWorkflow, paramName)
+		name = paramName.replace(pluginPrefix, "");
+		value =  workflow.getInputParameters().get(paramName);
+		type = param.type;
+		
+		System.log(name + "=" + value +  " | Type: " + type)
+
+		var paramProps = new Properties();
+		paramProps.put("value", workflow.getInputParameters().get(paramName));
+		paramProps.put("type", param.type);
+		
+		configuration.put(name, paramProps);
+	}
+}
+
+
+pluginConfigurations.put(pluginConfigurationName, configuration);
+pluginData.put("configurations", pluginConfigurations);
+allPluginsData.setAttributeWithKey(pluginName.toUpperCase(), pluginData);
+
+allPluginsData.reload()
+
+
+System.log("Result plugin data " + JSON.stringify(pluginData))
+//
+//Properties
+//	pluginName(string)
+//		configWorkfowID (string)
+//		configurations (Properties/Properties)
+		
+		
+function getInputParameter(wf, paramenterID){
+	for each (var param in wf.inParameters){
+		if(param.name == paramenterID){
+			return param;
+		}
+	}
+}
+function getPluginConfigurationProperty(pluginName, propertyName){
+	var pluginWorkflows = new Properties();
+	pluginWorkflows.put("POWERSHELL", {"workflowid": "EF8180808080808080808080808080803D80808001270557368849c62c352aa82", "prefix": "ps_"});
+	pluginWorkflows.put("VRA_IAAS", {"workflowid": "5ca252c4-b831-4746-8ffc-db3eb50f5b80", "prefix": "iaas_"});
+	pluginWorkflows.put("VAPI", {"workflowid": "9eee7150-b606-46c8-8caa-5b5d927ff5bc", "prefix": "vapi_"});
+	pluginWorkflows.put("SOAP", {"workflowid": "2A828080808080808080808080808080818080800126658240472157fdafc0fce", "prefix": "soap_"});
+	pluginWorkflows.put("VRA", {"workflowid": "0c8620c8-056b-4820-8d8e-9744fe22e406", "prefix": "vra_"});
+	pluginWorkflows.put("SSH", {"workflowid": "6135ac4f-2aaf-48be-b005-0672ae1e9802", "prefix": "ssh_"});
+	pluginWorkflows.put("AD", {"workflowid": "a090b0c2-5b49-4fb5-9e69-c1b84b01c908", "prefix": "ad_"});
+	pluginWorkflows.put("MULTINODE", {"workflowid": "eaef3c7d-c71e-4fa9-b70a-1ac3d807ba86", "prefix": "mn_"});
+	pluginWorkflows.put("VSPHERE", {"workflowid": "f246b7b5-fe89-4da5-a640-36ffc6874069", "prefix": "vc_"});
+	pluginWorkflows.put("REST", {"workflowid": "8F8080808080808080808080808080808080808001299080088268176866967b3", "prefix": "rest_"});
+	pluginWorkflows.put("SQL", {"workflowid": "18541090831854109083178946495518541090830101010101010101010101010", "prefix": "sql_"});
+
+	return new Properties(pluginWorkflows.get(pluginName.toUpperCase())).get(propertyName)
+}
+]]></script>
+    <in-binding>
+      <bind name="allPluginsData" type="ConfigurationElement" export-name="allPluginsData"/>
+      <bind name="pluginConfigurationName" type="string" export-name="pluginConfigurationName"/>
+      <bind name="pluginName" type="string" export-name="pluginName"/>
+    </in-binding>
+    <out-binding/>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="pluginName">
+      <desc><![CDATA[pluginName]]></desc>
+      <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#AD#;#string#POWERSHELL#;#string#VRA_IAAS#;#string#VRA#;#string#VAPI#;#string#SOAP#;#string#SSH#;#string#MULTINODE#;#string#VSPHERE#;#string#REST#;#string#SQL#}#]]></p-qual>
+    </p-param>
+    <p-param name="pluginConfigurationName">
+      <desc><![CDATA[pluginConfigurationName]]></desc>
+    </p-param>
+    <p-step>
+      <title><![CDATA[PowerShell]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#pluginName=="POWERSHELL"]]></p-qual>
+      <p-param name="ps_name">
+        <desc><![CDATA[Name of the specified PowerShell host]]></desc>
+      </p-param>
+      <p-param name="ps_hostName">
+        <desc><![CDATA[Host name or IP of the remote Power Shell machine]]></desc>
+      </p-param>
+      <p-param name="ps_port">
+        <desc><![CDATA[The port for the WinRM communication]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#ps_type=='WinRM' ]]></p-qual>
+        <p-qual kind="static" name="defaultValue" type="string"><![CDATA[]]></p-qual>
+      </p-param>
+      <p-param name="ps_type">
+        <desc><![CDATA[Host type]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#WinRM#}#]]></p-qual>
+      </p-param>
+      <p-param name="ps_transportProtocol">
+        <desc><![CDATA[Used in case of WinRM option is choosen to determine the transport protocol to either HTTP or HTTPS]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#HTTP#;#string#HTTPS#}#]]></p-qual>
+        <p-qual kind="static" name="defaultValue" type="string"><![CDATA[HTTP]]></p-qual>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#ps_type =='WinRM']]></p-qual>
+      </p-param>
+      <p-param name="ps_acceptAllCertificates">
+        <desc><![CDATA[Accept all certificates]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[false]]></p-qual>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#ps_transportProtocol=="HTTPS" ]]></p-qual>
+      </p-param>
+      <p-param name="ps_authentication">
+        <desc><![CDATA[Used in case of WinRM option choosen to determine authentication schema. Supports Basic and Kerberos authentication schema.]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#Basic#;#string#Kerberos#}#]]></p-qual>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#ps_type == "WinRM"]]></p-qual>
+        <p-qual kind="static" name="defaultValue" type="string"><![CDATA[Basic]]></p-qual>
+      </p-param>
+      <p-param name="ps_sessionMode">
+        <desc><![CDATA[Session mode]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#Shared Session#;#string#Session per User#}#]]></p-qual>
+      </p-param>
+      <p-param name="ps_username">
+        <desc><![CDATA[User name]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#ps_sessionMode=="Shared Session"]]></p-qual>
+      </p-param>
+      <p-param name="ps_password">
+        <desc><![CDATA[Password]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#ps_sessionMode=="Shared Session" ]]></p-qual>
+      </p-param>
+      <p-param name="ps_shellCodePage">
+        <desc><![CDATA[shellCodePage]]></desc>
+        <p-qual kind="ognl" name="defaultValue" type="string"><![CDATA[IBM437]]></p-qual>
+        <p-qual kind="ognl" name="linkedEnumeration" type="Array/string"><![CDATA[GetAction("com.vmware.library.powershell.configuration","getSupportedShellCodePages").call()]]></p-qual>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[VRA Infrastructure]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#pluginName=="VRA_IAAS"]]></p-qual>
+      <p-param name="iaas_hostAddress">
+        <desc><![CDATA[Host address]]></desc>
+      </p-param>
+      <p-param name="iaas_name">
+        <desc><![CDATA[Host's name]]></desc>
+      </p-param>
+      <p-param name="iaas_autoAccept">
+        <desc><![CDATA[Automatically install SSL certificates]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[__NULL__]]></p-qual>
+      </p-param>
+      <p-param name="iaas_addProxySettings">
+        <desc><![CDATA[Use proxy]]></desc>
+      </p-param>
+      <p-param name="iaas_proxyHost">
+        <desc><![CDATA[Proxy host]]></desc>
+        <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[#iaas_addProxySettings ? #iaas_proxyHost : ""]]></p-qual>
+      </p-param>
+      <p-param name="iaas_proxyPort">
+        <desc><![CDATA[Proxy port]]></desc>
+        <p-qual kind="ognl" name="dataBinding" type="number"><![CDATA[#iaas_addProxySettings ? #iaas_proxyPort : 0]]></p-qual>
+      </p-param>
+      <p-param name="iaas_defaultConnectionSettings">
+        <desc><![CDATA[Default connection settings]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[true]]></p-qual>
+      </p-param>
+      <p-param name="iaas_connectionTimeout">
+        <desc><![CDATA[Connection timeout]]></desc>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#iaas_defaultConnectionSettings]]></p-qual>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[30.0]]></p-qual>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[0.0]]></p-qual>
+      </p-param>
+      <p-param name="iaas_operationTimeout">
+        <desc><![CDATA[Operation timeout]]></desc>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[60.0]]></p-qual>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[0.0]]></p-qual>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#iaas_defaultConnectionSettings]]></p-qual>
+      </p-param>
+      <p-param name="iaas_authentication">
+        <desc><![CDATA[Host's authentication type]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#SSO#;#string#NTLM#}#]]></p-qual>
+      </p-param>
+      <p-param name="iaas_authUserName">
+        <desc><![CDATA[Authentication user name]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#iaas_sessionMode=="Shared Session" && #iaas_authentication != "SSO"]]></p-qual>
+      </p-param>
+      <p-param name="iaas_authPassword">
+        <desc><![CDATA[Authentication password]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#iaas_sessionMode=="Shared Session" && #iaas_authentication != "SSO"]]></p-qual>
+      </p-param>
+      <p-param name="iaas_workstation">
+        <desc><![CDATA[Workstation for NTLM authentication]]></desc>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#iaas_authentication == "SSO"]]></p-qual>
+      </p-param>
+      <p-param name="iaas_domain">
+        <desc><![CDATA[Domain for NTLM authentication]]></desc>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#iaas_authentication == "SSO"]]></p-qual>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[VAPI]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#pluginName=="VAPI"]]></p-qual>
+      <p-param name="vapi_endpointUrl">
+        <desc><![CDATA[vAPI endpoint URL to add  (eg. https://[hostname]/api)]]></desc>
+      </p-param>
+      <p-param name="vapi_useSecureConnection">
+        <desc><![CDATA[If set to Yes, secure protocol connection will be used to connect to vAPI endpoint]]></desc>
+      </p-param>
+      <p-param name="vapi_ignoreCertificateWarnings">
+        <desc><![CDATA[If set to true,the vAPI endpoint certificate is accepted silently and the certificate is added to the trusted store]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#vapi_useSecureConnection]]></p-qual>
+      </p-param>
+      <p-param name="vapi_username">
+        <desc><![CDATA[User name of the user that Orchestrator will use to connect to the vAPI endpoint]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#vapi_useSecureConnection]]></p-qual>
+      </p-param>
+      <p-param name="vapi_password">
+        <desc><![CDATA[Password of the user that Orchestrator will use to connect to the vAPI endpoint]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#vapi_useSecureConnection]]></p-qual>
+      </p-param>
+      <p-param name="vapi_addEndpoint">
+        <desc><![CDATA[vapi_addEndpoint]]></desc>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[SOAP]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#pluginName=="SOAP"]]></p-qual>
+      <p-param name="soap_name">
+        <desc><![CDATA[Name of the host]]></desc>
+      </p-param>
+      <p-param name="soap_isWsdlLocal">
+        <desc><![CDATA[If true, search for WSDL from URL; if false, take as content]]></desc>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#soap_isWsdlLocal]]></p-qual>
+      </p-param>
+      <p-param name="soap_wsdlUri">
+        <desc><![CDATA[URI to the WSDL file of the external service]]></desc>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#soap_isWsdlLocal]]></p-qual>
+      </p-param>
+      <p-param name="soap_wsdlContent">
+        <desc><![CDATA[WSDL content]]></desc>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#soap_isWsdlLocal]]></p-qual>
+        <p-qual name="textInput" type="void"><![CDATA[]]></p-qual>
+        <p-qual kind="static" name="defaultValue" type="string"><![CDATA[<!-- WSDLContent -->]]></p-qual>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#soap_isWsdlLocal]]></p-qual>
+      </p-param>
+      <p-param name="soap_connectionTimeout">
+        <desc><![CDATA[Connection timeout in seconds]]></desc>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[1]]></p-qual>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[30]]></p-qual>
+      </p-param>
+      <p-param name="soap_requestTimeout">
+        <desc><![CDATA[Request timeout in seconds]]></desc>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[1]]></p-qual>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[60]]></p-qual>
+      </p-param>
+      <p-param name="soap_useProxy">
+        <desc><![CDATA[Use Proxy]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#soap_useProxy]]></p-qual>
+      </p-param>
+      <p-param name="soap_proxyHost">
+        <desc><![CDATA[Proxy host]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#soap_useProxy]]></p-qual>
+      </p-param>
+      <p-param name="soap_proxyPort">
+        <desc><![CDATA[Proxy port]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#soap_useProxy]]></p-qual>
+      </p-param>
+      <p-param name="soap_authenticationType">
+        <desc><![CDATA[Authentication type]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#None#;#string#Basic#;#string#Digest#;#string#NTLM#;#string#Negotiate#}#]]></p-qual>
+      </p-param>
+      <p-param name="soap_sessionMode">
+        <desc><![CDATA[Session mode]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#Shared Session#;#string#Per User Session#}#]]></p-qual>
+      </p-param>
+      <p-param name="soap_username">
+        <desc><![CDATA[User name]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#soap_sessionMode == "Shared Session"]]></p-qual>
+      </p-param>
+      <p-param name="soap_password">
+        <desc><![CDATA[Password]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#soap_sessionMode == "Shared Session"]]></p-qual>
+      </p-param>
+      <p-param name="soap_domain">
+        <desc><![CDATA[NTLM domain]]></desc>
+      </p-param>
+      <p-param name="soap_workstation">
+        <desc><![CDATA[NTLM workstation]]></desc>
+      </p-param>
+      <p-param name="soap_spn">
+        <desc><![CDATA[Kerberos service SPN]]></desc>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[VRA]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#pluginName=="VRA"]]></p-qual>
+      <p-param name="vra_name">
+        <desc><![CDATA[Host name]]></desc>
+      </p-param>
+      <p-param name="vra_url">
+        <desc><![CDATA[Host URL]]></desc>
+      </p-param>
+      <p-param name="vra_acceptAllCertificates">
+        <desc><![CDATA[Automatically install SSL certificates]]></desc>
+      </p-param>
+      <p-param name="vra_connectionTimeout">
+        <desc><![CDATA[Connection timeout]]></desc>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[30.0]]></p-qual>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[0.0]]></p-qual>
+      </p-param>
+      <p-param name="vra_operationTimeout">
+        <desc><![CDATA[Operation timeout]]></desc>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[60.0]]></p-qual>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[0.0]]></p-qual>
+      </p-param>
+      <p-param name="vra_pageSize">
+        <desc><![CDATA[Maximum page size for objects retrieved from this host]]></desc>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[100.0]]></p-qual>
+        <p-qual kind="static" name="maxNumberValue" type="Number"><![CDATA[100]]></p-qual>
+      </p-param>
+      <p-param name="vra_sessionMode">
+        <desc><![CDATA[Session mode]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#Shared Session#;#string#Per User Session#}#]]></p-qual>
+      </p-param>
+      <p-param name="vra_tenant">
+        <desc><![CDATA[Tenant]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#vra_sessionMode=="Shared Session"]]></p-qual>
+      </p-param>
+      <p-param name="vra_authUsername">
+        <desc><![CDATA[Authentication username]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#vra_sessionMode=="Shared Session"]]></p-qual>
+      </p-param>
+      <p-param name="vra_authPassword">
+        <desc><![CDATA[Authentication password]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#vra_sessionMode=="Shared Session"]]></p-qual>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[SSH]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#pluginName=="SSH"]]></p-qual>
+      <p-param name="ssh_hostname">
+        <desc><![CDATA[The hostname of the SSH Host]]></desc>
+      </p-param>
+      <p-param name="ssh_port">
+        <desc><![CDATA[The target port]]></desc>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[22.0]]></p-qual>
+      </p-param>
+      <p-param name="ssh_rootFolders">
+        <desc><![CDATA[The Root Folders (optional)]]></desc>
+      </p-param>
+      <p-param name="ssh_username">
+        <desc><![CDATA[The username]]></desc>
+      </p-param>
+      <p-param name="ssh_passwordAuthentication">
+        <desc><![CDATA[Sets authentication to password or key file]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[true]]></p-qual>
+      </p-param>
+      <p-param name="ssh_password">
+        <desc><![CDATA[The password]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#ssh_passwordAuthentication]]></p-qual>
+      </p-param>
+      <p-param name="ssh_passphrase">
+        <desc><![CDATA[Private key pass-phrase]]></desc>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#ssh_passwordAuthentication]]></p-qual>
+      </p-param>
+      <p-param name="ssh_certificatePath">
+        <desc><![CDATA[Path to the private key]]></desc>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#ssh_passwordAuthentication]]></p-qual>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[AD]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#pluginName=="AD"]]></p-qual>
+      <p-param name="ad_name">
+        <desc><![CDATA[Configuration name]]></desc>
+      </p-param>
+      <p-param name="ad_host">
+        <desc><![CDATA[Active Directory host IP/URL.]]></desc>
+      </p-param>
+      <p-param name="ad_port">
+        <desc><![CDATA[Port (default: 389)]]></desc>
+        <p-qual kind="static" name="numberFormat" type="String"><![CDATA[#####]]></p-qual>
+        <p-qual kind="ognl" name="dataBinding" type="number"><![CDATA[#ad_useSSL?636:389]]></p-qual>
+      </p-param>
+      <p-param name="ad_ldapBase">
+        <desc><![CDATA[Root]]></desc>
+      </p-param>
+      <p-param name="ad_useSSL">
+        <desc><![CDATA[Use SSL]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[false]]></p-qual>
+      </p-param>
+      <p-param name="ad_ignoreWarnings">
+        <desc><![CDATA[Do not ask for confirmation when importing SSL certificate.]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#ad_useSSL]]></p-qual>
+      </p-param>
+      <p-param name="ad_defaultDomain">
+        <desc><![CDATA[Default domain]]></desc>
+      </p-param>
+      <p-param name="ad_useSharedSession">
+        <desc><![CDATA[Use a shared session]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[__NULL__]]></p-qual>
+      </p-param>
+      <p-param name="ad_sharedUserName">
+        <desc><![CDATA[User name for shared session]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#ad_useSharedSession]]></p-qual>
+      </p-param>
+      <p-param name="ad_sharedUserPassword">
+        <desc><![CDATA[Password for shared session]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#ad_useSharedSession]]></p-qual>
+      </p-param>
+      <p-param name="ad_loadBalancingMode">
+        <desc><![CDATA[ Client-side failover and load balancing. If the server set is configured with information about multiple directory servers, then it will be responsible for selecting which server to use and establishing the connection. If the initially-selected server is not available, then it may attempt to connect to one or more of the other defined servers before giving up and throwing an exception.  ]]></desc>
+        <p-qual kind="ognl" name="genericEnumeration" type="Array/string"><![CDATA[GetAction("com.vmware.library.microsoft.activeDirectory","getLdapLoadBalancingModes").call()]]></p-qual>
+      </p-param>
+      <p-param name="ad_alternativeHosts">
+        <desc><![CDATA[ The addresses of the directory servers to which the connections should be established.]]></desc>
+        <p-qual kind="ognl" name="notVisible" type="boolean"><![CDATA[#ad_loadBalancingMode=="Round-Robin DNS Server" || #ad_loadBalancingMode=="Single Server"]]></p-qual>
+      </p-param>
+      <p-param name="ad_followReferrals">
+        <desc><![CDATA[Indicates whether associated connections should attempt to follow any referrals that they encounter.]]></desc>
+      </p-param>
+      <p-param name="ad_connectTimeoutMillis">
+        <desc><![CDATA[The maximum length of time in milliseconds to wait for the connection to be established before failing]]></desc>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[MULTINODE]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#pluginName=="MULTINODE"]]></p-qual>
+      <p-param name="mn_host">
+        <desc><![CDATA[Orchestrator server's host address]]></desc>
+        <p-qual kind="static" name="inetAddress" type="String"><![CDATA[Host name or IP address]]></p-qual>
+      </p-param>
+      <p-param name="mn_port">
+        <desc><![CDATA[Orchestrator server's port]]></desc>
+        <p-qual kind="ognl" name="defaultValue" type="number"><![CDATA[8281]]></p-qual>
+        <p-qual kind="static" name="maxNumberValue" type="Number"><![CDATA[65535.0]]></p-qual>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[1]]></p-qual>
+        <p-qual kind="static" name="numberFormat" type="String"><![CDATA[#####]]></p-qual>
+      </p-param>
+      <p-param name="mn_ignoreWarnings">
+        <desc><![CDATA[If set to true, the certificate is accepted silently and the certificate is added to the trusted store]]></desc>
+      </p-param>
+      <p-param name="mn_generateProxyWorkflows">
+        <desc><![CDATA[Generate proxy workflows for remote server]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[false]]></p-qual>
+      </p-param>
+      <p-param name="mn_connectionTimeout">
+        <desc><![CDATA[Connection timeout (seconds)]]></desc>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[30.0]]></p-qual>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[0.0]]></p-qual>
+      </p-param>
+      <p-param name="mn_socketTimeout">
+        <desc><![CDATA[Socket timeout (seconds)]]></desc>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[60.0]]></p-qual>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[0.0]]></p-qual>
+      </p-param>
+      <p-param name="mn_retryTimeout">
+        <desc><![CDATA[Retry timeout (minutes). Specifies the time proxy workflows wait to receive a notification from the remote Orchestrator server in the event of no connectivity.]]></desc>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[1.0]]></p-qual>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[60.0]]></p-qual>
+      </p-param>
+      <p-param name="mn_isShared">
+        <desc><![CDATA[The way to connect to the remote server.]]></desc>
+        <p-qual kind="ognl" name="dataBinding" type="boolean"><![CDATA[#ms_ssoEnabled && !#ms_ssoSameAsVco]]></p-qual>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[__NULL__]]></p-qual>
+      </p-param>
+      <p-param name="mn_user">
+        <desc><![CDATA[Orchestrator server's user]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#mn_isShared]]></p-qual>
+      </p-param>
+      <p-param name="mn_pass">
+        <desc><![CDATA[Orchestrator server user's password]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#mn_isShared]]></p-qual>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[VSPHERE]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#pluginName=="VSPHERE"]]></p-qual>
+      <p-param name="vc_host">
+        <desc><![CDATA[IP or host name of the vCenter Server instance to add]]></desc>
+      </p-param>
+      <p-param name="vc_port">
+        <desc><![CDATA[vc_port]]></desc>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[443.0]]></p-qual>
+      </p-param>
+      <p-param name="vc_path">
+        <desc><![CDATA[Location of the SDK to use to connect to the vCenter Server instance]]></desc>
+        <p-qual kind="static" name="defaultValue" type="string"><![CDATA[/sdk]]></p-qual>
+      </p-param>
+      <p-param name="vc_enabled">
+        <desc><![CDATA[Enables this vCenter Server instance for orchestration]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[true]]></p-qual>
+      </p-param>
+      <p-param name="vc_ignoreCertificateWarnings">
+        <desc><![CDATA[If set to true,the vCenter Server instance certificate is accepted silently and the certificate is added to the trusted store]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[true]]></p-qual>
+      </p-param>
+      <p-param name="vc_sessionPerUser">
+        <desc><![CDATA[Specifies the method to manage user access to the vCenter Server system. If this is set to false, the method is share a unique session.]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[true]]></p-qual>
+      </p-param>
+      <p-param name="vc_userName">
+        <desc><![CDATA[User name of the user that Orchestrator will use to connect to the vCenter Server instance.]]></desc>
+        <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[#__username]]></p-qual>
+      </p-param>
+      <p-param name="vc_password">
+        <desc><![CDATA[Password of the user that Orchestrator will use to connect to the vCenter Server instance.]]></desc>
+      </p-param>
+      <p-param name="vc_domain">
+        <desc><![CDATA[Domain name. This is used only if method session per user is set]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#vc_sessionPerUser]]></p-qual>
+      </p-param>
+      <p-param name="vc_pbmUrl">
+        <desc><![CDATA[URL of PBM endpoint]]></desc>
+        <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[GetAction("com.vmware.library.vc.configuration","getPbmUrl").call(#vc_host, 443)]]></p-qual>
+      </p-param>
+      <p-param name="vc_smsUrl">
+        <desc><![CDATA[URL of SMS endpoint]]></desc>
+        <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[GetAction("com.vmware.library.vc.configuration","getSmsUrl").call(#vc_host, 443)]]></p-qual>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[REST]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#pluginName=="REST"]]></p-qual>
+      <p-param name="rest_name">
+        <desc><![CDATA[Host's name]]></desc>
+      </p-param>
+      <p-param name="rest_url">
+        <desc><![CDATA[Host's base URL]]></desc>
+      </p-param>
+      <p-param name="rest_connectionTimeout">
+        <desc><![CDATA[Connection timeout]]></desc>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[30.0]]></p-qual>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[0.0]]></p-qual>
+      </p-param>
+      <p-param name="rest_operationTimeout">
+        <desc><![CDATA[Operation timeout]]></desc>
+        <p-qual kind="static" name="defaultValue" type="number"><![CDATA[60.0]]></p-qual>
+        <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[0.0]]></p-qual>
+      </p-param>
+      <p-param name="rest_ignoreWarnings">
+        <desc><![CDATA[If set to true, the certificate is accepted silently and the certificate is added to the trusted store]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[false]]></p-qual>
+      </p-param>
+      <p-param name="rest_autoUrlRedirection">
+        <desc><![CDATA[Automatically URL redirection]]></desc>
+      </p-param>
+      <p-param name="rest_parallelRequestExecution">
+        <desc><![CDATA[rest_parallelRequestExecution]]></desc>
+      </p-param>
+      <p-param name="rest_authentication">
+        <desc><![CDATA[Host's authentication type]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#NONE#;#string#OAuth 1.0#;#string#OAuth 2.0#;#string#Basic#;#string#Digest#;#string#NTLM#;#string#Kerberos#}#]]></p-qual>
+      </p-param>
+      <p-param name="rest_sessionMode">
+        <desc><![CDATA[Session mode]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#Shared Session#;#string#Per User Session#}#]]></p-qual>
+      </p-param>
+      <p-param name="rest_authUserName">
+        <desc><![CDATA[Authentication user name]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_sessionMode=="Shared Session" && #rest_authentication!="NONE" && #rest_authentication!="OAuth 1.0" && #rest_authentication!="OAuth 2.0"]]></p-qual>
+      </p-param>
+      <p-param name="rest_authPassword">
+        <desc><![CDATA[Authentication password]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_sessionMode=="Shared Session" && #rest_authentication!="NONE" && #rest_authentication!="OAuth 1.0" && #rest_authentication!="OAuth 2.0"]]></p-qual>
+      </p-param>
+      <p-param name="rest_consumerKey">
+        <desc><![CDATA[Consumer key]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_authentication=="OAuth 1.0"]]></p-qual>
+      </p-param>
+      <p-param name="rest_consumerSecret">
+        <desc><![CDATA[Consumer secret]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_authentication=="OAuth 1.0"]]></p-qual>
+      </p-param>
+      <p-param name="rest_accessToken">
+        <desc><![CDATA[Access token]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_authentication=="OAuth 1.0"]]></p-qual>
+      </p-param>
+      <p-param name="rest_accessTokenSecret">
+        <desc><![CDATA[Access token secret]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_authentication=="OAuth 1.0"]]></p-qual>
+      </p-param>
+      <p-param name="rest_oauth2Token">
+        <desc><![CDATA[OAuth 2.0 token]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_authentication=="OAuth 2.0"]]></p-qual>
+      </p-param>
+      <p-param name="rest_workstation">
+        <desc><![CDATA[Workstation  for NTLM authentication]]></desc>
+        <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[GetAction("com.vmware.library.http-rest.configuration","getRESTHostAuthenticationProperty").call( #rest_host , 3.0, #rest_authentication, (#rest_authentication=="NTLM") )]]></p-qual>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_authentication=="NTLM"]]></p-qual>
+      </p-param>
+      <p-param name="rest_domain">
+        <desc><![CDATA[Domain  for NTLM authentication]]></desc>
+        <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[GetAction("com.vmware.library.http-rest.configuration","getRESTHostAuthenticationProperty").call( #reset_host , 4.0, #rest_authentication, (#rest_authentication=="NTLM") )]]></p-qual>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_authentication=="NTLM"]]></p-qual>
+      </p-param>
+      <p-param name="rest_useProxy">
+        <desc><![CDATA[Use Proxy]]></desc>
+      </p-param>
+      <p-param name="rest_proxyHost">
+        <desc><![CDATA[Proxy host]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_useProxy]]></p-qual>
+        <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[(#rest_useProxy && #rest_host != null) ? #rest_host.proxyHost : ""]]></p-qual>
+      </p-param>
+      <p-param name="rest_proxyPort">
+        <desc><![CDATA[Proxy port]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_useProxy]]></p-qual>
+        <p-qual kind="ognl" name="dataBinding" type="number"><![CDATA[(#rest_useProxy && #rest_host != null) ? #rest_host.proxyPort : ""]]></p-qual>
+      </p-param>
+      <p-param name="rest_proxyAuthentication">
+        <desc><![CDATA[Proxy AuthenticationType]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#NONE#;#string#Basic#}#]]></p-qual>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_useProxy]]></p-qual>
+      </p-param>
+      <p-param name="rest_proxySessionMode">
+        <desc><![CDATA[Proxy Session mode]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#Shared Session#;#string#Per User Session#}#]]></p-qual>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_useProxy && #rest_proxyAuthentication != "NONE" && #rest_proxyAuthentication != "OAuth 1.0" && #rest_proxyAuthentication != "OAuth 2.0"]]></p-qual>
+      </p-param>
+      <p-param name="rest_proxyAuthUserName">
+        <desc><![CDATA[Proxy user name]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_useProxy && (#rest_proxySessionMode == "Shared Session")]]></p-qual>
+      </p-param>
+      <p-param name="rest_proxyAuthPassword">
+        <desc><![CDATA[Proxy password]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#rest_useProxy && (#rest_proxySessionMode == "Shared Session")]]></p-qual>
+      </p-param>
+      <p-param name="rest_hostVerification">
+        <desc><![CDATA[Verify whether the target hostname matches the names stored inside the server's X.509 certificate]]></desc>
+        <p-qual kind="static" name="defaultValue" type="boolean"><![CDATA[true]]></p-qual>
+      </p-param>
+      <p-param name="rest_key">
+        <desc><![CDATA[The PrivateKeyEntry to use for client certificate authentication.]]></desc>
+        <p-qual kind="ognl" name="sdkRootObject" type="any"><![CDATA[#rest_keystoreList]]></p-qual>
+      </p-param>
+    </p-step>
+    <p-step>
+      <title><![CDATA[SQL]]></title>
+      <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#pluginName=="SQL"]]></p-qual>
+      <p-param name="sql_name">
+        <desc><![CDATA[Name of the specified database]]></desc>
+      </p-param>
+      <p-param name="sql_type">
+        <desc><![CDATA[Database type]]></desc>
+        <p-qual kind="ognl" name="linkedEnumeration" type="Array/string"><![CDATA[GetAction("com.vmware.library.sql.configuration","getSupportedDatabaseTypes").call()]]></p-qual>
+      </p-param>
+      <p-param name="sql_connectionURL">
+        <desc><![CDATA[Connection URL]]></desc>
+        <p-qual kind="static" name="mandatory" type="boolean"><![CDATA[true]]></p-qual>
+        <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[GetAction("com.vmware.library.sql.configuration","getConnectionUrl").call(#sql_connectionURL, #sql_type)]]></p-qual>
+      </p-param>
+      <p-param name="sql_sessionMode">
+        <desc><![CDATA[Session mode]]></desc>
+        <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#Shared Session#;#string#Per User Session#}#]]></p-qual>
+      </p-param>
+      <p-param name="sql_username">
+        <desc><![CDATA[User name]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#sql_sessionMode=="Shared Session"]]></p-qual>
+      </p-param>
+      <p-param name="sql_password">
+        <desc><![CDATA[Password]]></desc>
+        <p-qual kind="ognl" name="visible" type="boolean"><![CDATA[#sql_sessionMode=="Shared Session"]]></p-qual>
+      </p-param>
+    </p-step>
+  </presentation>
+</workflow>

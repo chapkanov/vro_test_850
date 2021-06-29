@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="executeVroServerWorkflow" result-type="string" api-version="6.0.0" id="0e54e6bf-2ab6-41fe-9a53-a16c3204d049" version="0.0.0" allowed-operations="evf" category-name="com.vmware.eso.vro">
+  <description><![CDATA[POST /api/workflows/{workflowId}/executions
+
+]]></description>
+  <param n="serverFQDN" t="string"/>
+  <param n="port" t="string"/>
+  <param n="user" t="string"/>
+  <param n="pass" t="string"/>
+  <param n="workflowId" t="string"/>
+  <param n="executionData" t="string"><![CDATA[Execution data (JSON format)]]></param>
+  <param n="waitToComplete" t="boolean"/>
+  <script encoded="false"><![CDATA[var httpMethod = "POST";
+var queryString = "/vco/api/workflows/" + workflowId+ "/executions/";
+
+var host =  System.getModule("com.vmware.eso.vro").createRestHost(serverFQDN, port, user, pass);
+var operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Execute workflow", httpMethod, queryString);
+var result = System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, executionData);
+
+if(result && result.length > 0){
+   result = JSON.parse(result);
+    error = result.error;
+
+    if(error && error.length > 0){
+        throw("Error triggering workflow: " + error);
+    }
+	
+	if(waitToComplete){
+		System.log("Wait workflow to complete")
+		waitWorkflowExecutionToFinish(host, result.id, 10*60*1000);
+	}
+	
+}
+
+function waitWorkflowExecutionToFinish(host, executionId, executionTimeout){
+	System.log("Execution id " + executionId)
+	var httpMethod = "GET";
+	var queryString = "/vco/api/workflows/" + workflowId+ "/executions/" + executionId + "/state";
+	var operation = System.getModule("com.vmware.eso.vro").createRestOperation(host, "Check execution state", httpMethod, queryString);
+	var state;
+	var currentTime = 0;
+	var timeSleep = 5000;
+	
+	while(currentTime < executionTimeout){
+		
+		var result = System.getModule("com.vmware.eso.vro").executeRestOperation(operation, null, null);
+		result = JSON.parse(result);
+		state = result.value;
+		if(state=="completed" || state=="failed"){
+			break;
+		}else{
+			System.sleep(timeSleep);
+			currentTime = currentTime + timeSleep;
+		}
+		
+	}
+	
+	if(currentTime > executionTimeout ){
+		throw("Timeout for workflow execution reached: " + executionTimeout);
+	}
+	if(state=="failed"){
+		System.error("Workflow execution failed")
+		throw("Workflow execution with id = " + executionId + " failed");
+	}
+}]]></script>
+</dunes-script-module>

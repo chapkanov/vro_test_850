@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<description><![CDATA[]]></description>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='584c07fe-3d37-44a6-b381-842213c27c64'&dunesName='Workflow']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/ResourceElement?id='5e31ef1d-5ce1-4298-a22b-4878a4f4d8af'&dunesName='ResourceElement']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='7c7d4d58-89e1-469f-8024-60a3c885e40c'&dunesName='Workflow']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='91c4a8ac-095a-4142-a247-0b670319f06e'&dunesName='Workflow']]></elm>
+</package>

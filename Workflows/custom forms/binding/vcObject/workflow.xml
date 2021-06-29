@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="790ab720-b3bc-4677-a57e-f46abf662c48" version="0.0.0" api-version="6.0.0" allowed-operations="vfe" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[vcObject]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="vcVms" type="VC:VirtualMachine"/>
+    <param name="id" type="string"/>
+    <param name="value" type="string"/>
+    <param name="name" type="string"/>
+    <param name="displayName" type="string"/>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="384.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[System.log("VM id: " + id);
+System.log("VM name: " + name);
+System.log("VM display name: " + displayName);]]></script>
+    <in-binding>
+      <bind name="vcVms" type="VC:VirtualMachine" export-name="vcVms"/>
+      <bind name="id" type="string" export-name="id"/>
+      <bind name="value" type="string" export-name="value"/>
+      <bind name="name" type="string" export-name="name"/>
+      <bind name="displayName" type="string" export-name="displayName"/>
+    </in-binding>
+    <out-binding/>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="vcVms">
+      <desc><![CDATA[vcVms]]></desc>
+    </p-param>
+    <p-param name="id">
+      <desc><![CDATA[id]]></desc>
+      <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[#vcVms.id]]></p-qual>
+    </p-param>
+    <p-param name="value">
+      <desc><![CDATA[value]]></desc>
+      <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[#vcVms.value]]></p-qual>
+    </p-param>
+    <p-param name="name">
+      <desc><![CDATA[name]]></desc>
+      <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[#vcVms.name]]></p-qual>
+    </p-param>
+    <p-param name="displayName">
+      <desc><![CDATA[displayName]]></desc>
+      <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[#vcVms.displayName]]></p-qual>
+    </p-param>
+  </presentation>
+</workflow>

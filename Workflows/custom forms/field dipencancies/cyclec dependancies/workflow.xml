@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="4ad319dd-0c6f-4718-a0e9-e76ed5146471" version="0.0.0" api-version="6.0.0" allowed-operations="vfe" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[cyclec dependancies]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="number1" type="number"/>
+    <param name="number2" type="number"/>
+    <param name="number3" type="number"/>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="384.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[System.log(number1);
+System.log(number2);
+System.log(number3);
+]]></script>
+    <in-binding>
+      <bind name="number1" type="number" export-name="number1"/>
+      <bind name="number2" type="number" export-name="number2"/>
+      <bind name="number3" type="number" export-name="number3"/>
+    </in-binding>
+    <out-binding/>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="number1">
+      <desc><![CDATA[number1]]></desc>
+    </p-param>
+    <p-param name="number2">
+      <desc><![CDATA[number2]]></desc>
+      <p-qual kind="ognl" name="dataBinding" type="number"><![CDATA[number1]]></p-qual>
+      <p-qual kind="ognl" name="ognlValidator" type="String"><![CDATA[#numbe2 >0]]></p-qual>
+    </p-param>
+    <p-param name="number3">
+      <desc><![CDATA[number3]]></desc>
+      <p-qual kind="ognl" name="dataBinding" type="number"><![CDATA[number1]]></p-qual>
+      <p-qual kind="ognl" name="ognlValidator" type="String"><![CDATA[#number3 > 0]]></p-qual>
+    </p-param>
+  </presentation>
+</workflow>

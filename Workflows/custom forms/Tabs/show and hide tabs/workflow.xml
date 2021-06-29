@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item0" object-name="workflow:name=generic" id="ed8e02da-f298-4d17-b383-df286fa0f8cc" version="0.0.0" api-version="6.0.0" allowed-operations="vfe" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[show and hide tabs]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="bool" type="boolean"/>
+    <param name="str" type="string"/>
+    <param name="number" type="number"/>
+    <param name="secure" type="SecureString"/>
+    <param name="vms" type="VC:VirtualMachine"/>
+    <param name="url" type="string"/>
+    <param name="port" type="number"/>
+    <param name="host" type="string"/>
+    <param name="num_max" type="number"/>
+    <param name="num_min" type="number"/>
+    <param name="num" type="number"/>
+    <param name="str_lenght" type="string"/>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="50.0" x="240.0"/>
+  </workflow-item>
+  <presentation>
+    <p-step>
+      <title><![CDATA[binding]]></title>
+      <p-group>
+        <title><![CDATA[Field binding]]></title>
+        <p-param name="bool">
+          <desc><![CDATA[bool]]></desc>
+        </p-param>
+        <p-param name="str">
+          <desc><![CDATA[str]]></desc>
+        </p-param>
+        <p-param name="number">
+          <desc><![CDATA[number]]></desc>
+        </p-param>
+        <p-param name="secure">
+          <desc><![CDATA[secure]]></desc>
+        </p-param>
+        <p-param name="vms">
+          <desc><![CDATA[vms]]></desc>
+        </p-param>
+      </p-group>
+    </p-step>
+    <p-step>
+      <title><![CDATA[New step]]></title>
+      <p-group>
+        <title><![CDATA[auto compl]]></title>
+        <p-param name="url">
+          <desc><![CDATA[url]]></desc>
+          <p-qual kind="ognl" name="dataBinding" type="string"><![CDATA[GetAction("test.forms","matching").call(#port, #host)]]></p-qual>
+        </p-param>
+        <p-param name="port">
+          <desc><![CDATA[port]]></desc>
+          <p-qual kind="ognl" name="defaultValue" type="number"><![CDATA[443]]></p-qual>
+        </p-param>
+        <p-param name="host">
+          <desc><![CDATA[host]]></desc>
+        </p-param>
+      </p-group>
+    </p-step>
+    <p-step>
+      <title><![CDATA[New step]]></title>
+      <p-group>
+        <title><![CDATA[Restriction]]></title>
+        <p-param name="num_max">
+          <desc><![CDATA[num_max]]></desc>
+          <p-qual kind="static" name="maxNumberValue" type="Number"><![CDATA[100.0]]></p-qual>
+        </p-param>
+        <p-param name="num_min">
+          <desc><![CDATA[num_min]]></desc>
+        </p-param>
+        <p-param name="num">
+          <desc><![CDATA[num]]></desc>
+          <p-qual kind="static" name="mandatory" type="boolean"><![CDATA[true]]></p-qual>
+          <p-qual kind="static" name="maxNumberValue" type="Number"><![CDATA[100.0]]></p-qual>
+          <p-qual kind="static" name="minNumberValue" type="Number"><![CDATA[20.0]]></p-qual>
+        </p-param>
+        <p-param name="str_lenght">
+          <desc><![CDATA[str_lenght]]></desc>
+          <p-qual kind="static" name="maxStringLength" type="Number"><![CDATA[100.0]]></p-qual>
+          <p-qual kind="static" name="minStringLength" type="Number"><![CDATA[10.0]]></p-qual>
+        </p-param>
+      </p-group>
+    </p-step>
+  </presentation>
+</workflow>

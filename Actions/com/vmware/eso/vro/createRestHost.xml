@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="createRestHost" result-type="REST:RESTHost" api-version="6.0.0" id="dde90a00-7fbe-42e8-8770-418e496685e2" version="0.0.0" allowed-operations="evf" category-name="com.vmware.eso.vro">
+  <param n="hostFQDN" t="string"/>
+  <param n="port" t="string"/>
+  <param n="username" t="string"/>
+  <param n="password" t="string"/>
+  <param n="protocol" t="string"/>
+  <script encoded="false"><![CDATA[var baseUrl = (protocol == null) ? "https://" + hostFQDN : protocol + "/" + baseUrl;
+if(port){
+	baseUrl = baseUrl + ":" + port;
+}
+System.debug("BASE URL " + baseUrl)
+System.debug("USER " + username)
+System.debug("PASS " + password)
+
+var restHost = getRestHost(baseUrl, username);
+
+if (restHost == null){
+    System.debug("Create a rest host")
+	restHost = createRestHost(baseUrl, username, password);
+}else{
+	System.debug("Found existing rest host for " + baseUrl) ;
+}
+
+return restHost;
+
+//--------------------------------------------------------------
+
+function getRestHost(baseURL, user){
+	var allHosts = Server.findAllForType("REST:RESTHost");
+	var targetHost = null;
+	for each(var host in allHosts){
+        var hostURL = host.url;
+        var auth = host.authentication;
+		
+        if(host.url == baseURL){
+            if(user == null || ( user && (auth.rawAuthProperties[1] == user))){
+                targetHost = host;
+                System.debug("Rest host for " + baseURL + " found");
+                break;
+            }
+		}
+	}
+	return targetHost;
+}
+
+function createRestHost(baseURL, userName, userPassword){
+	var retries = 3;
+	var currentRetryNumber = 1;
+	var tokenState = null;
+	
+	System.debug("Create Rest host for " + baseURL)
+	var id = "8F8080808080808080808080808080808080808001299080088268176866967b3"
+	var createRestHostWF = Server.getWorkflowWithId(id);
+	
+	var inParamProperties = new Properties();
+    hostName = (userName !=null) ? baseURL+ "@"+ userName :  baseURL;
+
+	inParamProperties.put("name", hostName);
+	inParamProperties.put("url", baseURL);
+	if((userName && userName.length > 0) && (userPassword && userPassword.length > 0)){
+        inParamProperties.put("authentication", "Basic");
+        inParamProperties.put("sessionMode", "Shared Session");
+        inParamProperties.put("authUserName", userName);
+        inParamProperties.put("authPassword", userPassword);
+    }else{
+        inParamProperties.put("authentication", "NONE");
+    }
+   
+	
+    inParamProperties.put("autoUrlRedirection", false);
+	inParamProperties.put("connectionTimeout", 600);
+	inParamProperties.put("operationTimeout", 600);
+	inParamProperties.put("hostVerification", false);
+	inParamProperties.put("ignoreWarnings", true);
+
+	var token = null;
+	do{
+		if(currentRetryNumber > 1){
+			System.debug("Retry to create a rest host for " + (currentRetryNumber)+" time") ;
+		}
+		currentRetryNumber++;
+		token =	createRestHostWF.execute(inParamProperties);
+		waitForExecutionToFinish(token, 1000, 5*60*1000);
+		tokenState = token.state;
+		
+		if(tokenState == 'failed' && currentRetryNumber <= retries ){
+			System.sleep(30000);
+		}
+		
+	}while(tokenState == null || (tokenState == 'failed' && currentRetryNumber <= retries ));
+	
+	if(tokenState == 'failed'){
+		throw("Error while creating a rest host " + token.exception);
+	}
+	
+	var outputs = token.getOutputParameters();
+
+	return outputs.get("restHost");
+}
+
+function waitForExecutionToFinish(token, poolInterval, timeOut){
+	var tokenState = token.state;
+	var currentDuration = poolInterval;
+	
+		
+	while(tokenState == "running" || tokenState == "waiting" || tokenState == "waiting-signal"){
+		System.sleep(poolInterval);
+		currentDuration = currentDuration + poolInterval;
+		
+		if(currentDuration >= timeOut){
+			throw("Workflow execution did not finish for " + timeOut);
+		}
+		
+		tokenState = token.state;
+		System.debug("Workflow " + token.currentWorkflow.name  + " | State " + tokenState);
+	}
+	System.debug("Workflow " + token.currentWorkflow.name + " finished with state " + tokenState);
+	
+	if(token.state == 'failed'){
+		System.debug("Error " + token.exception);
+	}	
+}]]></script>
+</dunes-script-module>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item0" object-name="workflow:name=generic" id="c8631e5a-5db0-4852-91d7-b98459f0a842" version="0.0.0" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[autocompleted fields]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="host" type="string"/>
+    <param name="port" type="number"/>
+    <param name="url" type="string"/>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="50.0" x="240.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

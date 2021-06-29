@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item0" object-name="workflow:name=generic" id="c05163e0-7477-4bb8-a5b4-cb90428ac120" version="0.0.0" api-version="6.0.0" allowed-operations="vfe" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[string restriction]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="str_max" type="number"/>
+    <param name="str_min" type="number"/>
+    <param name="str" type="string"/>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="50.0" x="240.0"/>
+  </workflow-item>
+  <presentation>
+    <p-step>
+      <title><![CDATA[String lenght]]></title>
+      <p-param name="str_max">
+        <desc><![CDATA[str_max]]></desc>
+      </p-param>
+      <p-param name="str_min">
+        <desc><![CDATA[str_min]]></desc>
+      </p-param>
+      <p-param name="str">
+        <desc><![CDATA[str]]></desc>
+        <p-qual kind="ognl" name="maxStringLength" type="Number"><![CDATA[#str_max]]></p-qual>
+        <p-qual kind="ognl" name="minStringLength" type="Number"><![CDATA[#str_min]]></p-qual>
+      </p-param>
+    </p-step>
+  </presentation>
+</workflow>

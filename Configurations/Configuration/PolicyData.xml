@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config-element id="ee159d56-0ac6-48aa-9bac-32ba392818ed" version="0.0.0">
+  <display-name><![CDATA[PolicyData]]></display-name>
+  <atts>
+    <att name="Event_based" type="Properties" read-only="false">
+      <value encoded="n"><![CDATA[{4:18:name=string#Event Based
+13:837:event-handler=Array#[410:Properties#{7:13:eventId=string#OnInit
+8:199:workflow=Properties#{15:13:customized-icon=boolean#false
+4:87:href=string#https://10.29.10.74:8281/vco/api/workflows/d4c0eeec-f144-4280-8403-80e808faa270/
+2:43:id=string#d4c0eeec-f144-4280-8403-80e808faa270
+}
+8:114:bindings=Array#[102:Properties#{11:20:export-name=string#onInitMessage
+4:15:name=string#strInput
+4:13:type=string#string
+}]
+4:14:type=string#trigger
+},410:Properties#{7:13:eventId=string#OnExit
+8:199:workflow=Properties#{15:13:customized-icon=boolean#false
+4:87:href=string#https://10.29.10.74:8281/vco/api/workflows/d4c0eeec-f144-4280-8403-80e808faa270/
+2:43:id=string#d4c0eeec-f144-4280-8403-80e808faa270
+}
+8:114:bindings=Array#[102:Properties#{11:20:export-name=string#onExitMessage
+4:15:name=string#strInput
+4:13:type=string#string
+}]
+4:14:type=string#trigger
+}]
+12:8:policy-items=Array#[]
+11:72:description=string#Event base policy triggering workflow and script on Init and Exit
+4:96:href=string#https://10.29.10.74:8281/vco/api/policies/templates/cec1554c-6779-47bc-ad1c-7003a7fbb29a/
+2:43:id=string#cec1554c-6779-47bc-ad1c-7003a7fbb29a
+9:138:relations=Properties#{4:113:link=Array#[101:Properties#{3:9:rel=string#up
+4:59:href=string#https://10.29.10.74:8281/vco/api/policies/templates/
+}]
+}
+7:12:version=string#0.0.0
+10:450:parameters=Array#[217:Properties#{5:12:scope=string#local
+4:20:name=string#onInitMessage
+4:13:type=string#string
+5:112:value=Properties#{6:86:string=Properties#{5:61:value=string#Event based policy workflow triggered on OnInint event
+}
+}
+},216:Properties#{5:12:scope=string#local
+4:20:name=string#onExitMessage
+4:13:type=string#string
+5:111:value=Properties#{6:85:string=Properties#{5:60:value=string#Event based policy workfow  triggered on OnExit event
+}
+}
+}]
+}]]></value>
+    </att>
+    <att name="Multi_element" type="Properties" read-only="false">
+      <value encoded="n"><![CDATA[{4:20:name=string#Multi element
+13:8:event-handler=Array#[]
+12:1443:policy-items=Array#[563:Properties#{13:365:event-handler=Array#[177:Properties#{7:16:eventId=string#OnTrapAll
+4:14:type=string#trigger
+6:96:script=string#System.log("Multi Element Policy script triggered on [SNMP: TrapHost] / OnTrapAll event")
+},171:Properties#{7:13:eventId=string#OnInit
+4:14:type=string#trigger
+6:93:script=string#System.log("Multi Element Policy script triggered on [SNMP: TrapHost] / OnInit event")
+}]
+4:12:name=string#tag-0
+12:119:event-source=Properties#{16:82:sdk-event-source=Properties#{8:20:sdk-type=string#SNMP:TrapHost
+2:25:id=string#Trap Host (online)
+}
+}
+},863:Properties#{13:666:event-handler=Array#[262:Properties#{7:22:eventId=string#Threshold.speed
+9:11:min-value=number#10.0
+4:12:type=string#gauge
+6:121:script=string#System.log("Multi Element Policy script triggered for Test:EventEmitterObject for threshhold in rangle (10 - 100")
+9:12:max-value=number#100.0
+},188:Properties#{7:16:eventId=string#onConnect
+4:14:type=string#trigger
+6:106:script=string#System.log("Multi Element Policy script triggered for Test:EventEmitterObject on event: onConnect")
+},194:Properties#{7:19:eventId=string#onDisconnect
+4:14:type=string#trigger
+6:109:script=string#System.log("Multi Element Policy script triggered for Test:EventEmitterObject on event: onDisconnect")
+}]
+4:13:name=string#Custom
+12:117:event-source=Properties#{16:80:sdk-event-source=Properties#{8:30:sdk-type=string#TEST:EventEmitterObject
+2:13:id=string#global
+}
+}
+}]
+11:36:description=string#Multi element policy template
+4:96:href=string#https://10.29.10.74:8281/vco/api/policies/templates/42ccdfe7-0cd1-490f-a1e6-5656e3de5e8d/
+2:43:id=string#42ccdfe7-0cd1-490f-a1e6-5656e3de5e8d
+9:138:relations=Properties#{4:113:link=Array#[101:Properties#{3:9:rel=string#up
+4:59:href=string#https://10.29.10.74:8281/vco/api/policies/templates/
+}]
+}
+7:12:version=string#1.0.0
+10:8:parameters=Array#[]
+}]]></value>
+    </att>
+    <att name="On_server_start" type="Properties" read-only="false">
+      <value encoded="n"><![CDATA[{4:22:name=string#On Server Start
+13:164:event-handler=Array#[152:Properties#{7:13:eventId=string#OnInit
+4:14:type=string#trigger
+6:74:script=string#System.log("On server start policy script triggered on init event")
+}]
+12:449:policy-items=Array#[437:Properties#{13:168:event-handler=Array#[156:Properties#{7:16:eventId=string#OnExecute
+4:14:type=string#trigger
+6:75:script=string#System.log("On server start policy script triggered on daily basis")
+}]
+4:12:name=string#Daily
+12:190:event-source=Properties#{17:151:task-event-source=Properties#{18:33:recurrence-pattern=string#(Europe/Helsinki) 01:00:00
+16:17:recurrence-cycle=string#every-days
+9:22:time-zone=string#Europe/Helsinki
+}
+}
+}]
+11:7:description=string#
+4:96:href=string#https://10.29.10.74:8281/vco/api/policies/templates/4c316c36-12c4-4781-9d59-16f38f2c34a1/
+2:43:id=string#4c316c36-12c4-4781-9d59-16f38f2c34a1
+9:138:relations=Properties#{4:113:link=Array#[101:Properties#{3:9:rel=string#up
+4:59:href=string#https://10.29.10.74:8281/vco/api/policies/templates/
+}]
+}
+7:12:version=string#0.1.2
+10:8:parameters=Array#[]
+}]]></value>
+    </att>
+    <att name="Time_based" type="Properties" read-only="false">
+      <value encoded="n"><![CDATA[{4:18:name=string#Time based 
+13:8:event-handler=Array#[]
+12:1321:policy-items=Array#[431:Properties#{13:159:event-handler=Array#[147:Properties#{7:16:eventId=string#OnExecute
+4:14:type=string#trigger
+6:66:script=string#System.log("Time based policy script triggered every hour")
+}]
+4:17:name=string#Every Hour
+12:188:event-source=Properties#{17:149:task-event-source=Properties#{18:30:recurrence-pattern=string#(Europe/Helsinki) 00:00
+16:18:recurrence-cycle=string#every-hours
+9:22:time-zone=string#Europe/Helsinki
+}
+}
+},437:Properties#{13:161:event-handler=Array#[149:Properties#{7:16:eventId=string#OnExecute
+4:14:type=string#trigger
+6:68:script=string#System.log("Time based policy script triggered every minute")
+}]
+4:19:name=string#Every Minute
+12:190:event-source=Properties#{17:151:task-event-source=Properties#{18:30:recurrence-pattern=string#(Europe/Helsinki) 10,30
+16:20:recurrence-cycle=string#every-minutes
+9:22:time-zone=string#Europe/Helsinki
+}
+}
+},431:Properties#{13:158:event-handler=Array#[146:Properties#{7:16:eventId=string#OnExecute
+4:14:type=string#trigger
+6:65:script=string#System.log("Time based policy script triggered every day")
+}]
+4:16:name=string#Every Day
+12:190:event-source=Properties#{17:151:task-event-source=Properties#{18:33:recurrence-pattern=string#(Europe/Helsinki) 00:40:00
+16:17:recurrence-cycle=string#every-days
+9:22:time-zone=string#Europe/Helsinki
+}
+}
+}]
+11:60:description=string#Policy triggering script on every minute / hour / day
+4:96:href=string#https://10.29.10.74:8281/vco/api/policies/templates/c3d6204d-33dc-46c1-ac01-3cb74a78675a/
+2:43:id=string#c3d6204d-33dc-46c1-ac01-3cb74a78675a
+9:138:relations=Properties#{4:113:link=Array#[101:Properties#{3:9:rel=string#up
+4:59:href=string#https://10.29.10.74:8281/vco/api/policies/templates/
+}]
+}
+7:12:version=string#0.0.1
+10:8:parameters=Array#[]
+}]]></value>
+    </att>
+  </atts>
+</config-element>

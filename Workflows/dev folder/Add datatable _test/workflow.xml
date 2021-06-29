@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="e3116562-31d6-4a16-a205-b91aee6eedc5" editor-version="2.0" version="0.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>Add datatable _test</display-name>
+    <position y="50.0" x="100.0"/>
+    <input/>
+    <output/>
+    <attrib name="database" type="SQL:Database">
+        <value encoded="n">dunes://service.dunes.ch/CustomSDKObject?id='e09fb02f-13f2-4cd3-828a-09dfa2d15881'&amp;dunesName='SQL:Database'</value>
+    </attrib>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="50.0" x="440.0"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item2" type="link" linked-workflow-id="8F8080808080808080808080808080808D80808001304924533492bf8ebee26f5" comparator="0">
+        <display-name>Add tables to a database</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="database" type="SQL:Database" export-name="">
+                <description>A database</description>
+            </bind>
+            <bind name="tableNames" type="Array/string" export-name="">
+                <description>Names of tables to be added </description>
+            </bind>
+        </in-binding>
+        <out-binding>
+            <bind name="result" type="Array/SQL:Table" export-name="">
+                <description>An array of table objects</description>
+            </bind>
+        </out-binding>
+        <description> </description>
+        <position y="60.0" x="180.0"/>
+    </workflow-item>
+    <workflow-item name="item2" out-name="item0" type="link" linked-workflow-id="9180808080808080808080808080808080808080013050415040353c595e3a533" comparator="0">
+        <display-name>Validate a database</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="database" type="SQL:Database" export-name="database">
+                <description>A database to be validated</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description> </description>
+        <position y="60.0" x="300.0"/>
+    </workflow-item>
+</ns2:workflow>

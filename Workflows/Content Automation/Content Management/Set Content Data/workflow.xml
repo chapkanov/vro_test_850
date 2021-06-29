@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="797a0038-9b95-431e-adbf-436faa1094a0" version="0.0.2" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Set Content Data]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="inputData" type="string"/>
+    <param name="dataType" type="string"/>
+    <param name="replace_config_data" type="boolean"/>
+  </input>
+  <attrib name="configData" type="ConfigurationElement" read-only="false">
+    <value encoded="n"><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='3e27bff6-a569-4af3-8ad6-321d86e62bfc'&dunesName='ConfigurationElement']]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="384.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[System.log("Set configuration data")
+System.log("Config type: " + dataType)
+System.log("Data: \n " + inputData)
+
+var dataArray = JSON.parse(inputData);
+
+for each(var el in dataArray){
+	System.log(JSON.stringify(el))
+}
+
+if(replace_config_data == false){
+	var existingData = configData.getAttributeWithKey(dataType).value;
+	dataArray = existingData.concat(dataArray)
+}
+configData.setAttributeWithKey(dataType, dataArray);
+configData.reload();
+
+]]></script>
+    <in-binding>
+      <bind name="inputData" type="string" export-name="inputData"/>
+      <bind name="dataType" type="string" export-name="dataType"/>
+      <bind name="configData" type="ConfigurationElement" export-name="configData"/>
+      <bind name="replace_config_data" type="boolean" export-name="replace_config_data"/>
+    </in-binding>
+    <out-binding/>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="dataType">
+      <desc><![CDATA[dataType]]></desc>
+      <p-qual kind="static" name="genericEnumeration" type="Array/string"><![CDATA[#{#string#plugin#;#string#policies#;#string#tokens#;#string#tasks#}#]]></p-qual>
+    </p-param>
+    <p-param name="inputData">
+      <desc><![CDATA[inputData]]></desc>
+      <p-qual name="textInput" type="void"><![CDATA[__NULL__]]></p-qual>
+    </p-param>
+    <p-param name="replace_config_data">
+      <desc><![CDATA[replace_config_data]]></desc>
+    </p-param>
+  </presentation>
+</workflow>
